@@ -1,0 +1,16 @@
+# Base configuration - common across all environments
+database:
+  host: localhost
+  port: 5432
+  pool_size: 10
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+cache:
+  type: memory
+
+security:
+  token_expire_minutes: 1440
+  secret_key: please_change_this_in_environment_config

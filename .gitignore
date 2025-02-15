@@ -1,0 +1,8 @@
+.vscode/
+.venv/
+__pycache__/
+.idea/
+.env
+poetry.lock
+.pytest_cache/
+logs
