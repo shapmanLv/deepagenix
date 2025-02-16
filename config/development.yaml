@@ -1,19 +1,10 @@
 database:
-  user: dev_user
-  password: dev_password
-  name: ai_platform_dev
-  host: localhos
-  pool_size: 5
+  connection_string: "postgresql://postgres:postgres@localhost:5432/deepagenix"
 
 cache:
   type: redis
   redis:
-    host: localhost
-    port: 6379
-    db: 0
+    connection_string: "redis://localhost:6379/0"
 
 logging:
   level: DEBUG
-
-security:
-  secret_key: insecure_dev_secret

@@ -1,8 +1,8 @@
 [tool.poetry]
-name = "ai-platform"
+name = "deepagenix"
 version = "0.1.0"
-description = "Modular AI platform with RAG and Foundation modules"
-authors = ["Your Name <you@example.com>"]
+description = "Deep Agenix"
+authors = ["Shapman Lv <shapmanlv@outlook.com>"]
 readme = "README.md"
 packages = [{include = "src"}]
 
@@ -16,13 +16,11 @@ python-jose = "^3.3.0"
 passlib = "^1.7.4"
 pyyaml = "^6.0.1"
 alembic = "^1.12.1"
-prometheus-client = "^0.18.0"
 celery = "^5.3.4"
 redis = "^4.6.0"
 sqlalchemy = "^2.0.23"
 sqlmodel = "^0.0.22"
 pgbouncer = "^0.1.0"
-dotty-dict = "^1.3.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"

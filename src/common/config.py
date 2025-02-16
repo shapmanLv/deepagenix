@@ -1,7 +1,6 @@
 import os
 import yaml
 from pathlib import Path
-from dotty_dict import dotty
 from typing import Any, Dict, List
 
 class ConfigLoader:
@@ -104,7 +103,7 @@ class ConfigLoader:
         """尝试解析环境变量值，如果无法解析，则返回原值"""
         try:
             return yaml.safe_load(value)
-        except:
+        except yaml.YAMLError:
             return value
     
     @property
