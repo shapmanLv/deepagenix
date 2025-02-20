@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import BinaryIO, Optional, Generator
 
+
 class StorageBase(ABC):
     """Abstract base class for file storage operations"""
-    
+
     @abstractmethod
     def upload(self, file_data: BinaryIO, file_path: str) -> str:
         """Store file data and return storage URI
@@ -54,7 +55,9 @@ class StorageBase(ABC):
         pass
 
     @abstractmethod
-    def get_presigned_url(self, file_path: str, expires_in: int = 3600) -> Optional[str]:
+    def get_presigned_url(
+        self, file_path: str, expires_in: int = 3600
+    ) -> Optional[str]:
         """Generate temporary access URL
         Args:
             file_path: Path to stored file

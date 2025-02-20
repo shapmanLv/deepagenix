@@ -3,21 +3,22 @@ from .base import BaseCache
 from typing import Any, Optional
 import pickle
 
+
 class RedisCache(BaseCache):
     def __init__(self, connection_string: str):
         from urllib.parse import urlparse
-        
+
         # 解析连接字符串
         parsed = urlparse(connection_string)
-        if parsed.scheme != 'redis':
+        if parsed.scheme != "redis":
             raise ValueError("Invalid Redis connection string scheme")
-            
+
         self._client = redis.Redis(
-            host=parsed.hostname or 'localhost',
+            host=parsed.hostname or "localhost",
             port=parsed.port or 6379,
-            db=int(parsed.path.lstrip('/')) if parsed.path else 0,
+            db=int(parsed.path.lstrip("/")) if parsed.path else 0,
             password=parsed.password or None,
-            decode_responses=False
+            decode_responses=False,
         )
 
     def _serialize(self, value: Any) -> bytes:

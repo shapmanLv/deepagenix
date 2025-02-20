@@ -1,7 +1,6 @@
 import pytest
-from datetime import datetime
-from unittest.mock import Mock
 from src.foundation.load_balancer.base import BaseLoadBalancer, LoadBalancerConfig
+
 
 class TestBaseLoadBalancer:
     @pytest.fixture
@@ -32,6 +31,7 @@ class TestBaseLoadBalancer:
         balancer.keys["key1"]["token_usage"] = 1000
         balancer.reset_rate_limits()
         assert balancer.keys["key1"]["token_usage"] == 0
+
 
 class TestLoadBalancerStrategies:
     @pytest.fixture(params=["round_robin", "random", "least_used"])

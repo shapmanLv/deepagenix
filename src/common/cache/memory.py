@@ -2,6 +2,7 @@ from .base import BaseCache
 from typing import Any, Optional
 import time
 
+
 class MemoryCache(BaseCache):
     def __init__(self):
         self._store = {}

@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from typing import List, Dict, Optional
+from typing import List, Optional
 import time
 import logging
 import json
 from redis import Redis
 from sqlalchemy.orm import Session
+
 
 @dataclass
 class LoadBalancerConfig:
@@ -16,24 +17,30 @@ class LoadBalancerConfig:
     cache_ttl: int = 300  # 缓存时间（秒）
     last_used_index: int = 0  # 上一次使用的key索引
 
+
 class BaseLoadBalancer:
-    def __init__(self, 
-                 api_keys: List[str], 
-                 config: LoadBalancerConfig,
-                 db: Session,
-                 redis_client: Redis):
+    def __init__(
+        self,
+        api_keys: List[str],
+        config: LoadBalancerConfig,
+        db: Session,
+        redis_client: Redis,
+    ):
         self.logger = logging.getLogger(__name__)
         self.config = config
         self.db = db
         self.redis_client = redis_client
-        self.keys = {key: {
-            "success_count": 0,
-            "failure_count": 0,
-            "last_used": 0,
-            "token_usage": 0,
-            "disabled_until": 0
-        } for key in api_keys}
-        
+        self.keys = {
+            key: {
+                "success_count": 0,
+                "failure_count": 0,
+                "last_used": 0,
+                "token_usage": 0,
+                "disabled_until": 0,
+            }
+            for key in api_keys
+        }
+
         # 初始化策略
         self._strategy_impl = self._get_strategy_implementation()
 
@@ -43,7 +50,7 @@ class BaseLoadBalancer:
             "round_robin": self._round_robin_strategy,
             "random": self._random_strategy,
             "least_used": self._least_used_strategy,
-            "performance_based": self._performance_based_strategy
+            "performance_based": self._performance_based_strategy,
         }
         return strategies.get(self.config.strategy, self._round_robin_strategy)
 
@@ -56,23 +63,25 @@ class BaseLoadBalancer:
     def _performance_based_strategy(self) -> Optional[str]:
         """性能优先策略"""
         from src.foundation.models.crud import ModelCRUD
-        
+
         # 获取可用模型列表
         available_models = ModelCRUD(self.db).get_active_models("llm")
-        
+
         # 评估模型性能
         scored_models = []
         for model in available_models:
             perf_data = self._get_model_performance_cache(model.id)
-            score = perf_data.get('throughput', 0) * 0.6 + \
-                    perf_data.get('accuracy', 0) * 0.4 - \
-                    perf_data.get('latency', 0) * 0.2
+            score = (
+                perf_data.get("throughput", 0) * 0.6
+                + perf_data.get("accuracy", 0) * 0.4
+                - perf_data.get("latency", 0) * 0.2
+            )
             scored_models.append((model.id, score))
-        
+
         # 选择最高分的模型
         if not scored_models:
             return None
-            
+
         best_model = max(scored_models, key=lambda x: x[1])
         return best_model[0]
 
@@ -84,11 +93,11 @@ class BaseLoadBalancer:
         """更新密钥使用统计"""
         if key not in self.keys:
             return
-            
+
         stats = self.keys[key]
         stats["token_usage"] += token_used
         stats["last_used"] = time.time()
-        
+
         if success:
             stats["success_count"] += 1
         else:
@@ -107,8 +116,8 @@ class BaseLoadBalancer:
         """检查密钥是否可用"""
         stats = self.keys[key]
         return (
-            stats["token_usage"] < self.config.tpm_limit and
-            time.time() > stats["disabled_until"]
+            stats["token_usage"] < self.config.tpm_limit
+            and time.time() > stats["disabled_until"]
         )
 
     def _round_robin_strategy(self) -> Optional[str]:
@@ -116,13 +125,14 @@ class BaseLoadBalancer:
         available_keys = [k for k in self.keys if self._is_key_available(k)]
         if not available_keys:
             return None
-            
+
         self.last_used_index = (self.last_used_index + 1) % len(available_keys)
         return available_keys[self.last_used_index]
 
     def _random_strategy(self) -> Optional[str]:
         """随机选择策略"""
         import random
+
         available_keys = [k for k in self.keys if self._is_key_available(k)]
         return random.choice(available_keys) if available_keys else None
 
@@ -131,5 +141,5 @@ class BaseLoadBalancer:
         available_keys = [k for k in self.keys if self._is_key_available(k)]
         if not available_keys:
             return None
-            
+
         return min(available_keys, key=lambda k: self.keys[k]["success_count"])
