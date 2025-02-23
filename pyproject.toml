@@ -21,6 +21,9 @@ redis = "^4.6.0"
 sqlalchemy = "^2.0.23"
 sqlmodel = "^0.0.22"
 pgbouncer = "^0.1.0"
+psutil = "^7.0.0"
+fasteners = "^0.19"
+atomics = "^1.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
