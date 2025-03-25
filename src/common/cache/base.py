@@ -1,24 +1,36 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Generic, Optional, TypeVar
+
+T = TypeVar("T")
 
 
-class BaseCache(ABC):
+class BaseCache(ABC, Generic[T]):
     @abstractmethod
-    def get(self, key: str) -> Optional[Any]:
+    async def get(self, key: str) -> Optional[T]:
         pass
 
     @abstractmethod
-    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
+    async def set(self, key: str, value: T, ttl: Optional[int] = None) -> None:
         pass
 
     @abstractmethod
-    def delete(self, key: str) -> None:
+    async def delete(self, key: str) -> None:
         pass
 
     @abstractmethod
-    def clear(self) -> None:
+    async def clear(self) -> None:
         pass
 
     @abstractmethod
-    def exists(self, key: str) -> bool:
+    async def exists(self, key: str) -> bool:
+        pass
+
+    @abstractmethod
+    async def atomic_get_or_set(
+        self, key: str, default_value: T, max_retries=10, ttl: Optional[int] = None
+    ) -> T:
+        pass
+
+    @abstractmethod
+    async def atomic_increment(self, key: str, ttl: Optional[int] = None) -> int:
         pass

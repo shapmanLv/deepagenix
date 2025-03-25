@@ -1,2 +1,7 @@
 [flake8]
-ignore = E501
+max-line-length = 120
+extend-ignore =
+    E203,  # 允许切片冒号前后空格
+    W503,  # 允许二元运算符换行
+    E704   # 允许多语句行（用于@overload定义）
+exclude = .git,__pycache__,venv

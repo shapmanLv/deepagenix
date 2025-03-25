@@ -1,9 +1,9 @@
-from sqlalchemy import Column, BigInteger, Boolean, DateTime, String
-from datetime import datetime
+from sqlalchemy import Column, BigInteger, Boolean, DateTime
+from datetime import datetime, timezone
 from ..snowflakeId import SnowflakeGenerator
 
 
-class Entity:
+class EntityBase:
     id = Column(BigInteger, primary_key=True, default=SnowflakeGenerator().generate())
 
     @staticmethod
@@ -17,14 +17,14 @@ class SoftDeleteBase:
 
     def soft_delete(self):
         self.deleted = True
-        self.deleted_at = datetime.now(datetime.timezone.utc)
+        self.deleted_at = datetime.now(timezone.utc)
 
 
 class AuditBase:
-    created_by = Column(String(50), comment="创建者")
-    created_at = Column(DateTime, default=datetime.now, comment="创建时间")
-    updated_by = Column(String(50), comment="修改者")
-    updated_at = Column(DateTime, onupdate=datetime.now, comment="修改时间")
+    created_by = Column(BigInteger, nullable=False, comment="创建者")
+    created_at = Column(DateTime, default=datetime.now(timezone.utc), comment="创建时间")
+    updated_by = Column(BigInteger, nullable=True, comment="修改者")
+    updated_at = Column(DateTime, onupdate=datetime.now(timezone.utc), comment="修改时间")
 
     def set_creator(self, user_id: int):
         self.created_by = user_id
