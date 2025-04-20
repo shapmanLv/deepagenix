@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "deepagenix index"
+version = "0.1.0"
+description = ""
+authors = ["shapman <shapmanlv@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13.3"
+uvicorn = "^0.34.1"
+fastapi = "^0.115.12"
+dotenv = "^0.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  deepagenix.core:
+    image: deepagenix-core
+    networks:
+      - deepagenix
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5555:8080"
+  
+  deepagenix.component.python:
+    image: deepagenix-component-python
+    networks:
+      - deepagenix
+    ports:
+      - "5556:8000"
+
+networks:
+  deepagenix:
+    driver: bridge

@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Deepagenix Core Module",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dotnet: build",
+            "program": "${workspaceFolder}/src/knowledge/bin/Debug/net9.0/knowledge.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/knowledge",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            // "serverReadyAction": {
+            //     "action": "openExternally",
+            //     "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            // },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "Deepagenix Component Python Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "src.chunk.main:app",
+                "--reload"
+            ],
+            "jinja": true,
+            "justMyCode": false,
+            "python": "${workspaceFolder}/src/chunk/.venv/bin/python3.13",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                // "PYTHON_GIL": "0",
+                // "PYTHON_JIT": "1",
+                "PYTHONPATH": "${workspaceFolder}/src/chunk:${workspaceFolder}/src/chunk/.venv/lib/python3.13/site-packages" // 添加项目根目录到 Python 路径
+            }
+        }
+    ]
+}
