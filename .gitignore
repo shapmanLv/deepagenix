@@ -70,7 +70,7 @@ build/
 *.iws
 
 # VS Code
-# .vscode/
+.vscode/
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -84,3 +84,6 @@ TestResults/
 # Python测试覆盖率
 .coverage
 htmlcov/
+
+# 本地临时内容文件夹
+appdata

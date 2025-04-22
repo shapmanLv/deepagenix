@@ -3,6 +3,8 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
+from src.components.python.common.consul import register_to_consul
+
 
 def app() -> FastAPI:
     load_dotenv()
@@ -10,6 +12,8 @@ def app() -> FastAPI:
     app.add_api_route("/health", lambda: "I am fine")
 
     # app.include_router(api_router, prefix="/api")
+
+    register_to_consul("component-python", 8000)
 
     return app
 

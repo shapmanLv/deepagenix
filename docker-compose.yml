@@ -1,21 +1,43 @@
 version: '3.4'
 
 services:
+  consul:
+    image: hashicorp/consul
+    networks:
+      - deepagenix
+    ports:
+      - "8500:8500"
+    command: "agent -server -bootstrap -ui -client=0.0.0.0"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+    volumes:
+      - ./appdata/consul:/consul/data
+
   deepagenix.core:
     image: deepagenix-core
     networks:
       - deepagenix
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
     ports:
       - "5555:8080"
+    depends_on:
+      - consul
   
   deepagenix.component.python:
     image: deepagenix-component-python
     networks:
       - deepagenix
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
     ports:
       - "5556:8000"
+    depends_on:
+      - deepagenix.core
 
 networks:
   deepagenix:

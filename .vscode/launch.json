@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "dotnet: build",
-            "program": "${workspaceFolder}/src/knowledge/bin/Debug/net9.0/knowledge.dll",
+            "program": "${workspaceFolder}/src/core/bin/Debug/net9.0/core.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/knowledge",
+            "cwd": "${workspaceFolder}/src/core",
             "console": "integratedTerminal",
             "stopAtEntry": false,
             // "serverReadyAction": {
@@ -19,7 +19,10 @@
             //     "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             // },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "CONSUL_HOST": "localhost",
+                "CONSUL_PORT": "8600",
+                "IP": "host.docker.internal"
             }
         },
         {
@@ -28,17 +31,21 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "src.chunk.main:app",
+                "src.components.python.main:app",
                 "--reload"
             ],
             "jinja": true,
             "justMyCode": false,
-            "python": "${workspaceFolder}/src/chunk/.venv/bin/python3.13",
+            "python": "${workspaceFolder}/src/components/python/.venv/bin/python3.13",
             "cwd": "${workspaceFolder}",
             "env": {
                 // "PYTHON_GIL": "0",
                 // "PYTHON_JIT": "1",
-                "PYTHONPATH": "${workspaceFolder}/src/chunk:${workspaceFolder}/src/chunk/.venv/lib/python3.13/site-packages" // 添加项目根目录到 Python 路径
+                "CONSUL_HOST": "localhost",
+                "CONSUL_PORT": "8600",
+                "IP": "host.docker.internal",
+                // "PYTHONPATH": "${workspaceFolder}/src/components/python:${workspaceFolder}/src/components/python/.venv/lib/python3.13/site-packages" // 添加项目根目录到 Python 路径
+                "PYTHONPATH": "${workspaceFolder}/src:${workspaceFolder}/src/components/python:${workspaceFolder}/src/components/python/.venv/lib/python3.13/site-packages"
             }
         }
     ]
