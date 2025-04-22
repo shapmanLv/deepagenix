@@ -1,14 +1,20 @@
-export enum IconType {
-  IconFolders = 'IconFolders',
-  IconFolderFilled = 'IconFolderFilled',
-  IconDatabase = 'IconDatabase',
-  IconBrandDatabricks = 'IconBrandDatabricks',
-}
+import { z } from 'zod'
 
-export interface KnowledgeItem {
-  name: string
-  icon: IconType
-  documents: number
-  relatedApplications: number
-  desc: string
-}
+export const IconTypeSchema = z.enum([
+  'IconFolders',
+  'IconFolderFilled',
+  'IconDatabase',
+  'IconBrandDatabricks',
+])
+
+export type IconType = z.infer<typeof IconTypeSchema>
+
+export const KnowledgeItemSchema = z.object({
+  name: z.string(),
+  icon: IconTypeSchema,
+  documents: z.number(),
+  relatedApplications: z.number(),
+  desc: z.string(),
+})
+
+export type KnowledgeItem = z.infer<typeof KnowledgeItemSchema>

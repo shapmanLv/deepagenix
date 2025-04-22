@@ -35,7 +35,6 @@ import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_aut
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountImport } from './routes/_authenticated/settings/account'
-import { Route as AuthenticatedKnowledgeCreateIndexImport } from './routes/_authenticated/knowledge/create/index'
 
 // Create/Update Routes
 
@@ -190,13 +189,6 @@ const AuthenticatedSettingsAccountRoute =
     id: '/account',
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
-  } as any)
-
-const AuthenticatedKnowledgeCreateIndexRoute =
-  AuthenticatedKnowledgeCreateIndexImport.update({
-    id: '/knowledge/create/',
-    path: '/knowledge/create/',
-    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -371,13 +363,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
-    '/_authenticated/knowledge/create/': {
-      id: '/_authenticated/knowledge/create/'
-      path: '/knowledge/create'
-      fullPath: '/knowledge/create'
-      preLoaderRoute: typeof AuthenticatedKnowledgeCreateIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
   }
 }
 
@@ -415,7 +400,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedKnowledgeIndexRoute: typeof AuthenticatedKnowledgeIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
-  AuthenticatedKnowledgeCreateIndexRoute: typeof AuthenticatedKnowledgeCreateIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -427,8 +411,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedKnowledgeIndexRoute: AuthenticatedKnowledgeIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
-  AuthenticatedKnowledgeCreateIndexRoute:
-    AuthenticatedKnowledgeCreateIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -459,7 +441,6 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -485,7 +466,6 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
 }
 
 export interface FileRoutesById {
@@ -514,7 +494,6 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
-  '/_authenticated/knowledge/create/': typeof AuthenticatedKnowledgeCreateIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -544,7 +523,6 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/tasks'
     | '/users'
-    | '/knowledge/create'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -569,7 +547,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
-    | '/knowledge/create'
   id:
     | '__root__'
     | '/_authenticated'
@@ -596,7 +573,6 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
-    | '/_authenticated/knowledge/create/'
   fileRoutesById: FileRoutesById
 }
 
@@ -661,8 +637,7 @@ export const routeTree = rootRoute
         "/_authenticated/help-center/",
         "/_authenticated/knowledge/",
         "/_authenticated/tasks/",
-        "/_authenticated/users/",
-        "/_authenticated/knowledge/create/"
+        "/_authenticated/users/"
       ]
     },
     "/_authenticated/settings": {
@@ -752,10 +727,6 @@ export const routeTree = rootRoute
     },
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/knowledge/create/": {
-      "filePath": "_authenticated/knowledge/create/index.tsx",
       "parent": "/_authenticated"
     }
   }

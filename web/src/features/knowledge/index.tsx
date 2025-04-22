@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import { Separator } from '@radix-ui/react-separator'
-import { useNavigate } from '@tanstack/react-router'
 import {
   IconAdjustmentsHorizontal,
   IconBrandDatabricks,
@@ -23,11 +21,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { KnowledgeCreateDialog } from './create'
 import { knowledges } from './data/konwledge'
 import { KnowledgeItem, IconType } from './data/schema'
 
@@ -41,10 +41,11 @@ export default function Knowledge() {
   const [sort, setSort] = useState('ascending')
   const [type, setType] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
-  const navigate = useNavigate()
+
+  const [opened, setOpened] = useState(false)
 
   const navigateCreateKnowledge = () => {
-    navigate({ to: '/knowledge/create' })
+    setOpened(true)
   }
 
   const filteredApps = knowledges
@@ -56,19 +57,19 @@ export default function Knowledge() {
     .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const renderCardIcon = (icon: IconType) => {
-    if (icon === IconType.IconBrandDatabricks) {
+    if (icon === 'IconBrandDatabricks') {
       return <IconBrandDatabricks />
     }
 
-    if (icon === IconType.IconDatabase) {
+    if (icon === 'IconDatabase') {
       return <IconDatabase />
     }
 
-    if (icon === IconType.IconFolderFilled) {
+    if (icon === 'IconFolderFilled') {
       return <IconFolderFilled />
     }
 
-    if (icon === IconType.IconFolders) {
+    if (icon === 'IconFolders') {
       return <IconFolders />
     }
 
@@ -222,6 +223,8 @@ export default function Knowledge() {
           {filteredApps.map(renderCard)}
         </ul>
       </Main>
+
+      <KnowledgeCreateDialog open={opened} onOpenChange={setOpened} />
     </>
   )
 }
