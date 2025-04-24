@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,7 +38,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { IconTypeSchema } from '../data/schema'
+import { IconTypeSchema, KnowledgeItem } from '../data/schema'
 
 // Enhanced validation schema
 const formSchema = z.object({
@@ -59,18 +60,30 @@ type KnowledgeForm = z.infer<typeof formSchema>
 interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
+  currentRow?: KnowledgeItem
 }
 
-export function KnowledgeCreateDialog({ open, onOpenChange }: Props) {
+const defaultValues: KnowledgeForm = {
+  name: '',
+  icon: 'IconFolders',
+  desc: '',
+}
+
+export function KnowledgeSettingsDialog({
+  open,
+  onOpenChange,
+  currentRow,
+}: Props) {
+  const isUpdate = !!currentRow
+
   const form = useForm<KnowledgeForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: '',
-      icon: 'IconFolders',
-      desc: '',
-    },
-    mode: 'onChange',
+    defaultValues: defaultValues,
   })
+
+  useEffect(() => {
+    form.reset(currentRow || defaultValues)
+  }, [currentRow, form])
 
   const onSubmit = (values: KnowledgeForm) => {
     form.reset()
@@ -88,9 +101,13 @@ export function KnowledgeCreateDialog({ open, onOpenChange }: Props) {
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-left'>
-          <DialogTitle>Create New Knowledge Base</DialogTitle>
+          <DialogTitle>
+            {isUpdate ? 'Knowledge Settings' : 'Create New Knowledge Base'}{' '}
+          </DialogTitle>
           <DialogDescription>
-            Configure a new knowledge repository for your organization.
+            {isUpdate
+              ? 'Update your knowledge base。'
+              : 'Configure a new knowledge repository for your organization.'}
           </DialogDescription>
         </DialogHeader>
         <div className='-mr-4 h-[26.25rem] w-full overflow-y-auto py-1 pr-2 pl-1'>
@@ -190,7 +207,7 @@ export function KnowledgeCreateDialog({ open, onOpenChange }: Props) {
         </div>
         <DialogFooter>
           <Button type='submit' form='knowledge-form'>
-            Create Knowledge Base
+            {isUpdate ? 'Update Knowledge Base' : 'Create Knowledge Base'}
           </Button>
         </DialogFooter>
       </DialogContent>

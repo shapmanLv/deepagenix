@@ -1,7 +1,9 @@
+import { nanoid } from 'nanoid'
 import { KnowledgeItem } from '../data/schema'
 
 export const knowledges: KnowledgeItem[] = [
   {
+    id: nanoid(),
     name: 'Telegram 111111111111111111111111111111111111111111111111111111111111111111111111111111111111',
     icon: 'IconBrandDatabricks',
     desc: 'Connect with Telegram for real-time communication.',
@@ -9,6 +11,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Notion',
     icon: 'IconBrandDatabricks',
     desc: 'Effortlessly sync Notion pages for seamless collaboration.',
@@ -16,6 +19,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Figma',
     icon: 'IconBrandDatabricks',
     desc: 'View and collaborate on Figma designs in one place.',
@@ -23,6 +27,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Trello',
     icon: 'IconDatabase',
     desc: 'Sync Trello cards for streamlined project management.',
@@ -30,6 +35,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Slack',
     icon: 'IconDatabase',
     desc: 'Integrate Slack for efficient team communication',
@@ -37,6 +43,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Zoom',
     icon: 'IconDatabase',
     desc: 'Host Zoom meetings directly from the dashboard.',
@@ -44,6 +51,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Stripe',
     icon: 'IconDatabase',
     desc: 'Easily manage Stripe transactions and payments.',
@@ -51,6 +59,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Gmail',
     icon: 'IconFolderFilled',
     desc: 'Access and manage Gmail messages effortlessly.',
@@ -58,6 +67,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Medium',
     icon: 'IconFolderFilled',
     desc: 'Explore and share Medium stories on your dashboard.',
@@ -65,6 +75,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Skype',
     icon: 'IconFolderFilled',
     desc: 'Connect with Skype contacts seamlessly.',
@@ -72,6 +83,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'Docker',
     icon: 'IconFolders',
     desc: 'Effortlessly manage Docker containers on your dashboard.',
@@ -79,6 +91,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'GitHub',
     icon: 'IconFolders',
     desc: 'Streamline code management with GitHub integration.',
@@ -86,6 +99,7 @@ export const knowledges: KnowledgeItem[] = [
     relatedApplications: 102,
   },
   {
+    id: nanoid(),
     name: 'GitLab',
     icon: 'IconFolders',
     desc: 'Efficiently manage code projects with GitLab integration.',
