@@ -14,15 +14,16 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { DataTable } from '@/components/dataTable/data-table'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { columns } from '../components/columns'
 import { KnowledgeNavRoute } from '../constants'
+import { documents } from '../data/documents'
 import { useKnowledgeNavLinks } from '../hooks/use-nav'
-
-// import { DataTable } from './components/data-table'
 
 export default function Documents() {
   const { id } = Route.useParams()
@@ -80,7 +81,7 @@ export default function Documents() {
         </div>
         <Separator className='shadow-sm' />
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          {/* <DataTable data={tasks} columns={columns} /> */}
+          <DataTable data={documents} columns={columns} />
         </div>
       </Main>
     </>

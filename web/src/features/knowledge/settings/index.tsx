@@ -4,6 +4,7 @@ import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { FileUpload } from '@/components/upload'
 import { KnowledgeNavRoute } from '../constants'
 import { useKnowledgeNavLinks } from '../hooks/use-nav'
 
@@ -24,7 +25,11 @@ export default function Settings() {
       </Header>
 
       {/* ===== Content ===== */}
-      <Main fixed>{id}</Main>
+      <Main fixed>
+        <div className='mx-auto flex w-full justify-center'>
+          <FileUpload />
+        </div>
+      </Main>
     </>
   )
 }
