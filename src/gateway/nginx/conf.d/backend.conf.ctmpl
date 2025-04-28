@@ -1,0 +1,72 @@
+include       mime.types;
+default_type  application/octet-stream;
+
+sendfile        on;
+tcp_nopush      on;
+tcp_nodelay     on;
+keepalive_timeout  65;
+
+# 开启 gzip 压缩
+gzip on;
+gzip_types text/plain text/css application/javascript application/json application/xml application/xml+rss text/javascript;
+gzip_min_length 1000;
+
+# upstream for core service
+upstream core_service {
+  ip_hash;
+  {{ range service "core" }}
+  server {{ .Address }}:{{ .Port }};
+  {{ end }}
+}
+
+# upstream for python component
+upstream component_python_service {
+  ip_hash;
+  {{ range service "component-python" }}
+  server {{ .Address }}:{{ .Port }};
+  {{ end }}
+}
+
+server {
+  listen 80;
+
+  # 前端静态资源加速与缓存控制
+  location /static/ {
+    root /var/www/frontend;
+    
+    # 设置缓存控制
+    add_header Cache-Control "public, max-age=31536000, immutable"; # 1 year cache, suitable for versioned assets
+    
+    # 禁用缓存控制 no-cache（如果你希望即时更新，不缓存）
+    # add_header Cache-Control "no-cache, no-store, must-revalidate";
+    expires 1y;  # 设置过期时间为一年
+
+    # 对 HTML 文件应用较短的缓存时间，避免长期缓存 HTML 文件
+    location ~* \.html$ {
+        add_header Cache-Control "no-cache, no-store, must-revalidate";  # 不缓存 HTML 文件
+        expires 0;
+    }
+  }
+
+  # API routes to core service
+  location /api/core/ {
+    proxy_pass http://core_service/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+
+  # API routes to python service
+  location /api/python/ {
+    proxy_pass http://component_python_service/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+  }
+
+
+  # 默认回退
+  location / {
+    root /var/www/frontend;
+    index index.html index.htm;
+    try_files $uri $uri/ /index.html;
+  }
+}
