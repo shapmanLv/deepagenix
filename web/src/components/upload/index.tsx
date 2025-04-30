@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { X, UploadCloud, FileText, Image, File } from 'lucide-react'
+import { IconX, IconUpload } from '@tabler/icons-react'
 import { useDropzone } from 'react-dropzone'
 import { cn } from '@/lib/utils'
+import { useSupportedFileTypes } from '@/hooks/use-upported-file-types'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -12,20 +13,17 @@ type FileWithPreview = File & {
   preview: string
   uploadProgress?: number
   size: number
+  type: Blob['type']
+  lastModified: number
+  name: string
 }
 
 export function FileUpload() {
   const [files, setFiles] = useState<FileWithPreview[]>([])
   const [isUploading, setIsUploading] = useState(false)
+  const { fileAccept, getFileIcon } = useSupportedFileTypes()
 
-  // 文件类型图标映射
-  const getFileIcon = (fileType: string) => {
-    if (fileType?.startsWith('image/')) return <Image className='h-5 w-5' />
-    if (fileType === 'application/pdf') return <FileText className='h-5 w-5' />
-    return <File className='h-5 w-5' />
-  }
-
-  // 模拟上传（返回Promise）
+  // Simulate upload (returns Promise)
   const simulateUpload = (file: FileWithPreview) => {
     return new Promise<void>((resolve) => {
       let progress = 0
@@ -50,13 +48,18 @@ export function FileUpload() {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setIsUploading(true)
 
-    const mappedFiles = acceptedFiles.map((file) => ({
-      ...file,
-      preview: URL.createObjectURL(file),
-      uploadProgress: 0,
-      size: file.size,
-    }))
-
+    const mappedFiles = acceptedFiles.map((file) => {
+      // 提取文件扩展名
+      return {
+        ...file,
+        preview: URL.createObjectURL(file),
+        uploadProgress: 0,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified,
+        name: file.name,
+      }
+    })
     setFiles((prev) => [...prev, ...mappedFiles])
 
     try {
@@ -67,7 +70,6 @@ export function FileUpload() {
   }, [])
 
   useEffect(() => {
-    // 清理预览URL
     return () => {
       files.forEach((file) => URL.revokeObjectURL(file.preview))
     }
@@ -75,11 +77,7 @@ export function FileUpload() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      'image/*': ['.png', '.jpg', '.jpeg'],
-      'application/pdf': ['.pdf'],
-      'text/plain': ['.txt'],
-    },
+    accept: fileAccept,
     maxSize: 5 * 1024 * 1024, // 5MB
   })
 
@@ -90,10 +88,10 @@ export function FileUpload() {
   return (
     <Card className='w-full max-w-3xl'>
       <CardHeader>
-        <CardTitle className='text-lg font-semibold'>Upload file</CardTitle>
+        <CardTitle className='text-lg font-semibold'>Upload Files</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* 拖拽区域 */}
+        {/* Drop zone */}
         <div
           {...getRootProps()}
           className={cn(
@@ -106,7 +104,7 @@ export function FileUpload() {
         >
           <input {...getInputProps()} />
           <div className='flex flex-col items-center gap-4'>
-            <UploadCloud
+            <IconUpload
               className={cn(
                 'text-muted-foreground h-10 w-10 transition-colors',
                 isDragActive && 'text-primary'
@@ -114,63 +112,75 @@ export function FileUpload() {
             />
             <div className='space-y-1'>
               <p className='text-sm font-medium'>
-                {isDragActive ? '释放以上传文件' : '拖放文件或点击选择'}
+                {isDragActive
+                  ? 'Drop to upload'
+                  : 'Drag & drop or click to select'}
               </p>
               <p className='text-muted-foreground text-xs'>
-                支持格式：PNG, JPG, PDF, TXT（最大5MB）
+                Supported formats:{' '}
+                {useSupportedFileTypes()
+                  .fileTypes.map((t) => t.extensions)
+                  .flat()
+                  .join(', ')}{' '}
+                (Max 5MB)
               </p>
             </div>
           </div>
         </div>
 
-        {/* 文件列表 */}
+        {/* File list */}
         {files.length > 0 && (
-          <div className='no-scrollbar mt-6 h-[400px] space-y-4 overflow-auto'>
-            {files.map((file) => (
-              <div
-                key={file.name}
-                className='bg-muted/50 flex items-center justify-between rounded-lg border p-4'
-              >
-                <div className='flex min-w-0 flex-1 items-center gap-3'>
-                  <div className='text-muted-foreground'>
-                    {getFileIcon(file.type)}
-                  </div>
-                  <div className='min-w-0 flex-1'>
-                    <div className='flex items-center justify-between text-sm'>
-                      <span className='truncate font-medium'>{file.name}</span>
-                      <span className='text-muted-foreground ml-2 text-xs'>
-                        {(file?.size / 1024)?.toFixed(1)}KB
-                      </span>
-                    </div>
-                    {file.uploadProgress !== undefined && (
-                      <div className='mt-1.5'>
-                        <Progress
-                          value={file.uploadProgress}
-                          className='bg-muted h-2'
-                        />
-                        <div className='text-muted-foreground mt-1 flex justify-between text-xs'>
-                          <span>
-                            {file.uploadProgress === 100
-                              ? '上传完成'
-                              : '上传中...'}
-                          </span>
-                          <span>{file.uploadProgress}%</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  className='text-muted-foreground hover:text-destructive ml-2 h-8 w-8'
-                  onClick={() => removeFile(file.name)}
-                  disabled={isUploading}
+          <div className='no-scrollbar mt-6 max-h-[400px] space-y-4 overflow-auto'>
+            {files.map((file) => {
+              const FileIcon = getFileIcon(file.type)
+              return (
+                <div
+                  key={file.name}
+                  className='bg-muted/50 flex items-center justify-between rounded-lg border p-4'
                 >
-                  <X className='h-4 w-4' />
-                </Button>
-              </div>
-            ))}
+                  <div className='flex min-w-0 flex-1 items-center gap-3'>
+                    <div className='text-muted-foreground'>
+                      <FileIcon className='h-6 w-6' />
+                    </div>
+                    <div className='min-w-0 flex-1'>
+                      <div className='flex items-center justify-between text-sm'>
+                        <span className='truncate font-medium'>
+                          {file.name}
+                        </span>
+                        <span className='text-muted-foreground ml-2 text-xs'>
+                          {(file?.size / 1024)?.toFixed(1)}KB
+                        </span>
+                      </div>
+                      {file.uploadProgress !== undefined && (
+                        <div className='mt-1.5'>
+                          <Progress
+                            value={file.uploadProgress}
+                            className='bg-muted h-2'
+                          />
+                          <div className='text-muted-foreground mt-1 flex justify-between text-xs'>
+                            <span>
+                              {file.uploadProgress === 100
+                                ? 'Upload complete'
+                                : 'Uploading...'}
+                            </span>
+                            <span>{file.uploadProgress}%</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='text-muted-foreground hover:text-destructive ml-2 h-8 w-8'
+                    onClick={() => removeFile(file.name)}
+                    disabled={isUploading}
+                  >
+                    <IconX className='h-4 w-4' />
+                  </Button>
+                </div>
+              )
+            })}
           </div>
         )}
       </CardContent>

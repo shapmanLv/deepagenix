@@ -26,7 +26,7 @@ export default function Settings() {
 
       {/* ===== Content ===== */}
       <Main fixed>
-        <div className='mx-auto flex w-full justify-center'>
+        <div className='mx-auto mt-16 flex w-full items-center justify-center'>
           <FileUpload />
         </div>
       </Main>
