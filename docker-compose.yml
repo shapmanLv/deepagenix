@@ -12,7 +12,7 @@ services:
       - ./appdata/consul:/consul/data
 
   nginx:
-    image: nginx-upsync
+    image: deepagenix-nginx-upsync
     networks:
       - deepagenix
     ports:
