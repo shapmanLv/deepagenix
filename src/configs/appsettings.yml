@@ -1,4 +1,12 @@
-Logging:
-  LogLevel:
-    Default: Information
-    Microsoft.AspNetCore: Warning
+Knolewdge:
+  StorageType: Local                        # 文件存储方式
+  Local:
+    BaseFolder: knowledge                   # 文件本地存储文件夹
+
+Jwt:
+  Secret: A0XB9KV6Eo9^AZt@6VBdPVoEF3eNg6@R  # 32位长秘钥
+  Issuer: deepagenix
+  Audience: deepagenix
+  ExpireMinutes: 120                        # access token 有效期
+  RefreshTokenExpireDays: 7                 # refresh token 有效期
+  AnonymousUserTokenExpireMonths: 120       # 匿名用户 access token 有效期

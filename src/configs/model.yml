@@ -1,0 +1,7 @@
+embedding:
+  name: bge
+  url: https://xxxx.com/v1
+  apiKey: sk-212wdwdwede
+  dimension: 512         # 向量维度
+  requestsPerSecond: 10  # 每秒允许的请求数
+  modelProvider: openai  # 填 openai 或 ollama

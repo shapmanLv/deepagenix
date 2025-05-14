@@ -6,10 +6,22 @@ services:
     networks:
       - deepagenix
     ports:
-      - "${CONSUL_PORT}:${CONSUL_PORT}"
+      - "${CONSUL_PORT}:8500"
     command: "agent -server -bootstrap -ui -client=0.0.0.0"
     volumes:
       - ./appdata/consul:/consul/data
+
+  postgres:
+    image: postgres
+    networks:
+      - deepagenix
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - ./appdata/postgres:/var/lib/postgresql/data
 
   nginx:
     image: deepagenix-nginx-upsync
@@ -23,34 +35,31 @@ services:
       - ./appdata/nginx/upstreams:/usr/local/nginx/conf/servers
       - ./web/dist:/var/www/frontend
     depends_on:
-      - core
-      - component-python
+      - main
 
-  core:
-    image: deepagenix-core
+  main:
+    image: deepagenix-main
     networks:
       - deepagenix
     environment:
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - CONSUL_HOST=${CONSUL_HOST}
-      - CONSUL_PORT=${CONSUL_PORT}
-    ports:
-      - "8080"
+      - ASPNETCORE_ENVIRONMENT=Production
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
+    volumes:
+      - ./appdata/knowledge:/app/knowledge
     depends_on:
       - consul
+      - postgres
 
   component-python:
     image: deepagenix-component-python
     networks:
       - deepagenix
     environment:
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - CONSUL_HOST=${CONSUL_HOST}
-      - CONSUL_PORT=${CONSUL_PORT}
-    ports:
-      - "8000"
+      - CONSUL_HOST=consul
+      - CONSUL_PORT=8500
     depends_on:
-      - core
+      - main
 
 networks:
   deepagenix:

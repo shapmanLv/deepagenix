@@ -1,0 +1,11 @@
+Logging:
+  LogLevel:
+    Default: Warning
+    Microsoft.AspNetCore: Warning
+
+Postgres:
+  Host: postgres
+  Port: 5432
+  User: postgres
+  Password: postgres
+  Database: deepagenix

@@ -1,0 +1,11 @@
+Logging:
+  LogLevel:
+    Default: Debug
+    Microsoft.AspNetCore: Information
+
+Postgres:
+  Host: localhost
+  Port: 5433
+  User: postgres
+  Password: postgres
+  Database: deepagenix

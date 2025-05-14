@@ -2,9 +2,9 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace core.Extensions;
+namespace DeepAgenix.Common.Extensions;
 
-public static class IpAddress
+public static class IpAddressExtension
 {
     public static async Task<string?> GetIpAsync() 
     {

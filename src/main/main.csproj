@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="consul" Version="1.7.14.7" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Yaml" Version="2.0.0-preview2" />
+    <ProjectReference Include="..\services\common\common.csproj" />
+    <ProjectReference Include="..\services\knowledge\knowledge.csproj" />
+    <ProjectReference Include="..\services\admin\admin.csproj" />
   </ItemGroup>
 
 </Project>
