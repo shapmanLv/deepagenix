@@ -125,7 +125,7 @@ export default function RetrievalTesting() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder='Enter your test query...'
-                    className='min-h-[200px]'
+                    className='min-h-[200px] resize-none'
                   />
                 </div>
 
