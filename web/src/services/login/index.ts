@@ -7,9 +7,39 @@ export interface LoginResponse {
   refreshToken: string
 }
 
+export interface LoginParams {
+  password: string
+  username: string
+}
+
 export function useLogin() {
   return useMutation({
-    mutationFn: () =>
-      httpClient.post<BaseResponse<LoginResponse>>(`/api/user/anonymous/login`),
+    mutationFn: (body: LoginParams) =>
+      httpClient.post<BaseResponse<LoginResponse>>(`/api/user/login`, body),
+  })
+}
+
+export interface RegisterParams {
+  password: string
+  username: string
+}
+
+export function useRegister() {
+  return useMutation({
+    mutationFn: (body: RegisterParams) =>
+      httpClient.post<BaseResponse<LoginResponse>>(`/api/user/register`, body),
+  })
+}
+
+export interface RefreshTokenParams {
+  refreshToken: string
+}
+
+export function useRefreshToken() {
+  return useMutation({
+    mutationFn: (params: RefreshTokenParams) =>
+      httpClient.post<BaseResponse<LoginResponse>>(
+        `/api/user/refresh/${params?.refreshToken}`
+      ),
   })
 }
