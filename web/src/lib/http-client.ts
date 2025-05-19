@@ -21,9 +21,10 @@ declare module 'axios' {
 }
 
 export type BaseResponse<T = unknown> = {
+  code: number
   data: T
-  msg: string
-  success: boolean
+  message?: string
+  timestamp?: number
 }
 
 export type BusinessError = Error & {
@@ -42,7 +43,7 @@ class HttpClient {
 
   constructor() {
     this.instance = axios.create({
-      baseURL: '/da',
+      baseURL: import.meta.env.VITE_API_BASE_URL,
       timeout: 15_000,
       withCredentials: true,
       headers: {
@@ -66,7 +67,7 @@ class HttpClient {
     const { requireAuth = true } = config
 
     if (requireAuth) {
-      const token = useAuthStore.getState().accessToken
+      const token = useAuthStore.getState().auth.accessToken
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -78,11 +79,11 @@ class HttpClient {
   private handleResponse(response: AxiosResponse<BaseResponse>): AxiosResponse {
     const { data } = response
 
-    if (!data.success) {
-      toast.error(data?.msg || 'Network Error', {
-        position: 'top-right',
-        duration: 5000,
-      })
+    if (data.code !== 200) {
+      const error = new Error(data.message || 'Business Error') as AxiosError
+      error.response = response
+      error.isAxiosError = true
+      throw error
     }
 
     return response
@@ -98,25 +99,24 @@ class HttpClient {
 
     // 错误提示处理
     if (config?.showError !== false) {
-      const errorMessage = response?.data?.msg || 'Network Error'
+      const errorMessage = response?.data?.message || 'Network Error'
 
       toast.error(errorMessage, {
-        position: 'top-right',
+        position: 'top-center',
         duration: 5000,
       })
     }
 
     // 认证失效处理
     if (response?.status === 401) {
-      useAuthStore.getState().clearTokens()
+      useAuthStore.getState().auth.reset()
     }
 
     return Promise.reject(error)
   }
 
   public request = async <T = unknown>(config: RequestConfig) => {
-    const resp = await this.instance.request<BaseResponse<T>>(config)
-    return resp.data
+    return this.instance.request<BaseResponse<T>, T>(config)
   }
 
   public get = <T = unknown>(url: string, config?: RequestConfig) => {
