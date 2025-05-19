@@ -17,11 +17,11 @@ function RouteComponent() {
   const defaultOpen = Cookies.get('sidebar_state') !== 'false'
 
   return (
-    <SearchProvider>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <LoadingProvider>
-          <GlobalLoading />
-          <AuthProvider>
+    <LoadingProvider>
+      <AuthProvider>
+        <SearchProvider>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <GlobalLoading />
             <SkipToMain />
             <AppSidebar />
             <div
@@ -38,9 +38,9 @@ function RouteComponent() {
             >
               <Outlet />
             </div>
-          </AuthProvider>
-        </LoadingProvider>
-      </SidebarProvider>
-    </SearchProvider>
+          </SidebarProvider>
+        </SearchProvider>
+      </AuthProvider>
+    </LoadingProvider>
   )
 }

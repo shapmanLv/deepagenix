@@ -5,23 +5,20 @@ import { useLoading } from './loading-context'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate()
-  const { startLoading, stopLoading } = useLoading()
+  const { startLoading } = useLoading()
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      startLoading()
       const authToken = useAuthStore.getState().accessToken
-
       if (!authToken) {
+        startLoading(undefined, 1000)
         navigate({ to: '/sign-in', replace: true })
-        stopLoading()
         return
       }
-      stopLoading()
     }
 
     checkAuthentication()
-  }, [navigate, startLoading, stopLoading])
+  }, [navigate, startLoading])
 
   return <>{children}</>
 }
