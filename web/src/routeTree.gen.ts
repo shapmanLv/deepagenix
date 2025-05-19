@@ -30,12 +30,13 @@ import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticat
 import { Route as AuthenticatedKnowledgeIndexImport } from './routes/_authenticated/knowledge/index'
 import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
-import { Route as AuthenticatedAppsIndexImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountImport } from './routes/_authenticated/settings/account'
-import { Route as AuthenticatedKnowledgeCreateIndexImport } from './routes/_authenticated/knowledge/create/index'
+import { Route as AuthenticatedKnowledgeDetailIdSettingsImport } from './routes/_authenticated/knowledge/detail/$id/settings'
+import { Route as AuthenticatedKnowledgeDetailIdRetrievalTestingImport } from './routes/_authenticated/knowledge/detail/$id/retrieval-testing'
+import { Route as AuthenticatedKnowledgeDetailIdDocumentsImport } from './routes/_authenticated/knowledge/detail/$id/documents'
 
 // Create/Update Routes
 
@@ -158,12 +159,6 @@ const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexImport.update({
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
-const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexImport.update({
-  id: '/apps/',
-  path: '/apps/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsImport.update({
     id: '/notifications',
@@ -192,10 +187,24 @@ const AuthenticatedSettingsAccountRoute =
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
 
-const AuthenticatedKnowledgeCreateIndexRoute =
-  AuthenticatedKnowledgeCreateIndexImport.update({
-    id: '/knowledge/create/',
-    path: '/knowledge/create/',
+const AuthenticatedKnowledgeDetailIdSettingsRoute =
+  AuthenticatedKnowledgeDetailIdSettingsImport.update({
+    id: '/knowledge/detail/$id/settings',
+    path: '/knowledge/detail/$id/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
+const AuthenticatedKnowledgeDetailIdRetrievalTestingRoute =
+  AuthenticatedKnowledgeDetailIdRetrievalTestingImport.update({
+    id: '/knowledge/detail/$id/retrieval-testing',
+    path: '/knowledge/detail/$id/retrieval-testing',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
+const AuthenticatedKnowledgeDetailIdDocumentsRoute =
+  AuthenticatedKnowledgeDetailIdDocumentsImport.update({
+    id: '/knowledge/detail/$id/documents',
+    path: '/knowledge/detail/$id/documents',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -322,13 +331,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsImport
       parentRoute: typeof AuthenticatedSettingsRouteImport
     }
-    '/_authenticated/apps/': {
-      id: '/_authenticated/apps/'
-      path: '/apps'
-      fullPath: '/apps'
-      preLoaderRoute: typeof AuthenticatedAppsIndexImport
-      parentRoute: typeof AuthenticatedRouteImport
-    }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
@@ -371,11 +373,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
-    '/_authenticated/knowledge/create/': {
-      id: '/_authenticated/knowledge/create/'
-      path: '/knowledge/create'
-      fullPath: '/knowledge/create'
-      preLoaderRoute: typeof AuthenticatedKnowledgeCreateIndexImport
+    '/_authenticated/knowledge/detail/$id/documents': {
+      id: '/_authenticated/knowledge/detail/$id/documents'
+      path: '/knowledge/detail/$id/documents'
+      fullPath: '/knowledge/detail/$id/documents'
+      preLoaderRoute: typeof AuthenticatedKnowledgeDetailIdDocumentsImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/knowledge/detail/$id/retrieval-testing': {
+      id: '/_authenticated/knowledge/detail/$id/retrieval-testing'
+      path: '/knowledge/detail/$id/retrieval-testing'
+      fullPath: '/knowledge/detail/$id/retrieval-testing'
+      preLoaderRoute: typeof AuthenticatedKnowledgeDetailIdRetrievalTestingImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/knowledge/detail/$id/settings': {
+      id: '/_authenticated/knowledge/detail/$id/settings'
+      path: '/knowledge/detail/$id/settings'
+      fullPath: '/knowledge/detail/$id/settings'
+      preLoaderRoute: typeof AuthenticatedKnowledgeDetailIdSettingsImport
       parentRoute: typeof AuthenticatedRouteImport
     }
   }
@@ -409,26 +425,30 @@ const AuthenticatedSettingsRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedKnowledgeIndexRoute: typeof AuthenticatedKnowledgeIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
-  AuthenticatedKnowledgeCreateIndexRoute: typeof AuthenticatedKnowledgeCreateIndexRoute
+  AuthenticatedKnowledgeDetailIdDocumentsRoute: typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
+  AuthenticatedKnowledgeDetailIdRetrievalTestingRoute: typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
+  AuthenticatedKnowledgeDetailIdSettingsRoute: typeof AuthenticatedKnowledgeDetailIdSettingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedKnowledgeIndexRoute: AuthenticatedKnowledgeIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
-  AuthenticatedKnowledgeCreateIndexRoute:
-    AuthenticatedKnowledgeCreateIndexRoute,
+  AuthenticatedKnowledgeDetailIdDocumentsRoute:
+    AuthenticatedKnowledgeDetailIdDocumentsRoute,
+  AuthenticatedKnowledgeDetailIdRetrievalTestingRoute:
+    AuthenticatedKnowledgeDetailIdRetrievalTestingRoute,
+  AuthenticatedKnowledgeDetailIdSettingsRoute:
+    AuthenticatedKnowledgeDetailIdSettingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -452,14 +472,15 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/knowledge': typeof AuthenticatedKnowledgeIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
+  '/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
+  '/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
+  '/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
 }
 
 export interface FileRoutesByTo {
@@ -478,14 +499,15 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/knowledge': typeof AuthenticatedKnowledgeIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
+  '/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
+  '/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
+  '/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
 }
 
 export interface FileRoutesById {
@@ -507,14 +529,15 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
-  '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/knowledge/': typeof AuthenticatedKnowledgeIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
-  '/_authenticated/knowledge/create/': typeof AuthenticatedKnowledgeCreateIndexRoute
+  '/_authenticated/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
+  '/_authenticated/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
+  '/_authenticated/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
 }
 
 export interface FileRouteTypes {
@@ -537,14 +560,15 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
-    | '/apps'
     | '/chats'
     | '/help-center'
     | '/knowledge'
     | '/settings/'
     | '/tasks'
     | '/users'
-    | '/knowledge/create'
+    | '/knowledge/detail/$id/documents'
+    | '/knowledge/detail/$id/retrieval-testing'
+    | '/knowledge/detail/$id/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -562,14 +586,15 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
-    | '/apps'
     | '/chats'
     | '/help-center'
     | '/knowledge'
     | '/settings'
     | '/tasks'
     | '/users'
-    | '/knowledge/create'
+    | '/knowledge/detail/$id/documents'
+    | '/knowledge/detail/$id/retrieval-testing'
+    | '/knowledge/detail/$id/settings'
   id:
     | '__root__'
     | '/_authenticated'
@@ -589,14 +614,15 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
-    | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/help-center/'
     | '/_authenticated/knowledge/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
-    | '/_authenticated/knowledge/create/'
+    | '/_authenticated/knowledge/detail/$id/documents'
+    | '/_authenticated/knowledge/detail/$id/retrieval-testing'
+    | '/_authenticated/knowledge/detail/$id/settings'
   fileRoutesById: FileRoutesById
 }
 
@@ -656,13 +682,14 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/settings",
         "/_authenticated/",
-        "/_authenticated/apps/",
         "/_authenticated/chats/",
         "/_authenticated/help-center/",
         "/_authenticated/knowledge/",
         "/_authenticated/tasks/",
         "/_authenticated/users/",
-        "/_authenticated/knowledge/create/"
+        "/_authenticated/knowledge/detail/$id/documents",
+        "/_authenticated/knowledge/detail/$id/retrieval-testing",
+        "/_authenticated/knowledge/detail/$id/settings"
       ]
     },
     "/_authenticated/settings": {
@@ -726,10 +753,6 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/settings/notifications.tsx",
       "parent": "/_authenticated/settings"
     },
-    "/_authenticated/apps/": {
-      "filePath": "_authenticated/apps/index.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/chats/": {
       "filePath": "_authenticated/chats/index.tsx",
       "parent": "/_authenticated"
@@ -754,8 +777,16 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/users/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/knowledge/create/": {
-      "filePath": "_authenticated/knowledge/create/index.tsx",
+    "/_authenticated/knowledge/detail/$id/documents": {
+      "filePath": "_authenticated/knowledge/detail/$id/documents.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/knowledge/detail/$id/retrieval-testing": {
+      "filePath": "_authenticated/knowledge/detail/$id/retrieval-testing.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/knowledge/detail/$id/settings": {
+      "filePath": "_authenticated/knowledge/detail/$id/settings.tsx",
       "parent": "/_authenticated"
     }
   }
