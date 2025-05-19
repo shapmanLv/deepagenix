@@ -22,7 +22,7 @@ export function useLoading() {
 }
 
 export function LoadingProvider({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState('Loading...')
 
   const startLoading = useCallback((newMessage?: string) => {

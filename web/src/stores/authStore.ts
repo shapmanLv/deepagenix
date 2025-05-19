@@ -4,14 +4,9 @@ import { localAccessToken, localRefreshToken } from './lcoal'
 interface AuthState {
   accessToken?: string
   refreshToken?: string
-  expiresAtUtc?: string
   isLoading: boolean
   error?: string
-  setTokens: (tokens: {
-    accessToken: string
-    refreshToken: string
-    expiresAtUtc: string
-  }) => void
+  setTokens: (tokens: { accessToken: string; refreshToken: string }) => void
   setLoading: (isLoading: boolean) => void
   setError: (error?: string) => void
   clearTokens: () => void
@@ -20,13 +15,12 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: localAccessToken.get(),
   refreshToken: localRefreshToken.get(),
-  expiresAtUtc: undefined,
   isLoading: false,
   error: undefined,
-  setTokens: ({ accessToken, refreshToken, expiresAtUtc }) => {
+  setTokens: ({ accessToken, refreshToken }) => {
     localAccessToken.set(accessToken)
     localRefreshToken.set(refreshToken)
-    set({ accessToken, refreshToken, expiresAtUtc })
+    set({ accessToken, refreshToken })
   },
   setLoading: (isLoading) => set({ isLoading }),
   setError: (error) => set({ error }),
@@ -36,7 +30,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       accessToken: undefined,
       refreshToken: undefined,
-      expiresAtUtc: undefined,
       error: undefined,
     })
   },

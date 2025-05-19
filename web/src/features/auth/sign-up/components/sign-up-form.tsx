@@ -1,7 +1,11 @@
-import { HTMLAttributes, useState } from 'react'
+import { HTMLAttributes } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from '@tanstack/react-router'
+import { useRegister } from '@/services/login'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/authStore'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -36,7 +40,10 @@ const formSchema = z
   })
 
 export function SignUpForm({ className, ...props }: SignUpFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const { setTokens } = useAuthStore()
+  const navigate = useNavigate()
+
+  const { mutateAsync: register, isPending } = useRegister()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,14 +54,24 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-
-    console.log(data)
-
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    const res = await register({
+      username: data.username,
+      password: data.password,
+    })
+    if (res.success) {
+      setTokens({
+        accessToken: res?.data.accessToken,
+        refreshToken: res?.data.refreshToken,
+      })
+      toast.success('login success', {
+        position: 'top-right',
+        duration: 5000,
+      })
+      navigate({
+        to: '/',
+      })
+    }
   }
 
   return (
@@ -103,7 +120,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
             </FormItem>
           )}
         />
-        <Button className='mt-2' disabled={isLoading}>
+        <Button className='mt-2' disabled={isPending}>
           Create Account
         </Button>
       </form>

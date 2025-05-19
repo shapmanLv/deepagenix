@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query'
-import { httpClient, type BaseResponse } from '@/lib/http-client'
+import { httpClient } from '@/lib/http-client'
 
 export interface LoginResponse {
   accessToken: string
@@ -15,7 +15,7 @@ export interface LoginParams {
 export function useLogin() {
   return useMutation({
     mutationFn: (body: LoginParams) =>
-      httpClient.post<BaseResponse<LoginResponse>>(`/api/user/login`, body),
+      httpClient.post<LoginResponse>(`/api/user/login`, body),
   })
 }
 
@@ -27,7 +27,7 @@ export interface RegisterParams {
 export function useRegister() {
   return useMutation({
     mutationFn: (body: RegisterParams) =>
-      httpClient.post<BaseResponse<LoginResponse>>(`/api/user/register`, body),
+      httpClient.post<LoginResponse>(`/api/user/register`, body),
   })
 }
 
@@ -38,7 +38,7 @@ export interface RefreshTokenParams {
 export function useRefreshToken() {
   return useMutation({
     mutationFn: (params: RefreshTokenParams) =>
-      httpClient.post<BaseResponse<LoginResponse>>(
+      httpClient.post<LoginResponse>(
         `/api/user/refresh/${params?.refreshToken}`
       ),
   })

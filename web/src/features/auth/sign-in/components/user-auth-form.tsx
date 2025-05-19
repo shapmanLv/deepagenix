@@ -2,7 +2,7 @@ import { HTMLAttributes } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useLogin } from '@/services/login'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
@@ -35,6 +35,7 @@ const formSchema = z.object({
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const { setTokens } = useAuthStore()
+  const navigate = useNavigate()
 
   const { mutateAsync: login, isPending } = useLogin()
 
@@ -49,17 +50,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       const res = await login(data)
-      console.log(res)
       if (res.success) {
         setTokens({
           accessToken: res?.data.accessToken,
           refreshToken: res?.data.refreshToken,
-          expiresAtUtc: res?.data.expiresAtUtc,
         })
-      } else {
-        toast.error(res?.data?.msg ?? 'login error', {
-          position: 'top-center',
+        toast.success('login success', {
+          position: 'top-right',
           duration: 5000,
+        })
+        navigate({
+          to: '/',
         })
       }
     } catch (error) {

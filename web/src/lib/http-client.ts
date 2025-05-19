@@ -79,8 +79,8 @@ class HttpClient {
     const { data } = response
 
     if (!data.success) {
-      toast.error(data?.msg ?? 'login error', {
-        position: 'top-center',
+      toast.error(data?.msg || 'Network Error', {
+        position: 'top-right',
         duration: 5000,
       })
     }
@@ -101,7 +101,7 @@ class HttpClient {
       const errorMessage = response?.data?.msg || 'Network Error'
 
       toast.error(errorMessage, {
-        position: 'top-center',
+        position: 'top-right',
         duration: 5000,
       })
     }
@@ -115,7 +115,7 @@ class HttpClient {
   }
 
   public request = async <T = unknown>(config: RequestConfig) => {
-    const resp = await this.instance.request<AxiosResponse<T>>(config)
+    const resp = await this.instance.request<BaseResponse<T>>(config)
     return resp.data
   }
 

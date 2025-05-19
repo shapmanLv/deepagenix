@@ -1,4 +1,6 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/authStore'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +15,9 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export function ProfileDropdown() {
+  const { clearTokens } = useAuthStore()
+  const navigate = useNavigate()
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -55,7 +60,16 @@ export function ProfileDropdown() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            clearTokens()
+            navigate({ to: '/sign-in', replace: true })
+            toast.success('Log out', {
+              position: 'top-right',
+              duration: 5000,
+            })
+          }}
+        >
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
