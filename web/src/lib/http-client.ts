@@ -89,26 +89,8 @@ class HttpClient {
   }
 
   private handleError = (error: AxiosError<BaseResponse>) => {
-    const { response, config } = error
-
-    // 处理取消请求的特殊情况
     if (axios.isCancel(error)) {
       return Promise.reject({ name: 'Canceled', message: 'Request canceled' })
-    }
-
-    // 错误提示处理
-    if (config?.showError !== false) {
-      const errorMessage = response?.data?.msg || 'Network Error'
-
-      toast.error(errorMessage, {
-        position: 'top-right',
-        duration: 5000,
-      })
-    }
-
-    // 认证失效处理
-    if (response?.status === 401) {
-      useAuthStore.getState().clearTokens()
     }
 
     return Promise.reject(error)
