@@ -21,10 +21,9 @@ declare module 'axios' {
 }
 
 export type BaseResponse<T = unknown> = {
-  code: number
   data: T
-  message?: string
-  timestamp?: number
+  msg: string
+  success: boolean
 }
 
 export type BusinessError = Error & {
@@ -43,7 +42,7 @@ class HttpClient {
 
   constructor() {
     this.instance = axios.create({
-      baseURL: import.meta.env.VITE_API_BASE_URL,
+      baseURL: '/da',
       timeout: 15_000,
       withCredentials: true,
       headers: {
@@ -67,7 +66,7 @@ class HttpClient {
     const { requireAuth = true } = config
 
     if (requireAuth) {
-      const token = useAuthStore.getState().auth.accessToken
+      const token = useAuthStore.getState().accessToken
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
@@ -79,11 +78,11 @@ class HttpClient {
   private handleResponse(response: AxiosResponse<BaseResponse>): AxiosResponse {
     const { data } = response
 
-    if (data.code !== 200) {
-      const error = new Error(data.message || 'Business Error') as AxiosError
-      error.response = response
-      error.isAxiosError = true
-      throw error
+    if (!data.success) {
+      toast.error(data?.msg || 'Network Error', {
+        position: 'top-right',
+        duration: 5000,
+      })
     }
 
     return response
@@ -99,24 +98,25 @@ class HttpClient {
 
     // 错误提示处理
     if (config?.showError !== false) {
-      const errorMessage = response?.data?.message || 'Network Error'
+      const errorMessage = response?.data?.msg || 'Network Error'
 
       toast.error(errorMessage, {
-        position: 'top-center',
+        position: 'top-right',
         duration: 5000,
       })
     }
 
     // 认证失效处理
     if (response?.status === 401) {
-      useAuthStore.getState().auth.reset()
+      useAuthStore.getState().clearTokens()
     }
 
     return Promise.reject(error)
   }
 
   public request = async <T = unknown>(config: RequestConfig) => {
-    return this.instance.request<BaseResponse<T>, T>(config)
+    const resp = await this.instance.request<BaseResponse<T>>(config)
+    return resp.data
   }
 
   public get = <T = unknown>(url: string, config?: RequestConfig) => {

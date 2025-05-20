@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ export default function SignIn() {
         <CardHeader>
           <CardTitle className='text-lg tracking-tight'>Login</CardTitle>
           <CardDescription>
-            Enter your email and password below to <br />
+            Enter your user and password below to <br />
             log into your account
           </CardDescription>
         </CardHeader>
@@ -25,20 +26,13 @@ export default function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking login, you agree to our{' '}
-            <a
-              href='/terms'
+            Don't have an account?{' '}
+            <Link
+              to='/sign-up'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a
-              href='/privacy'
-              className='hover:text-primary underline underline-offset-4'
-            >
-              Privacy Policy
-            </a>
+              Sign up
+            </Link>
             .
           </p>
         </CardFooter>

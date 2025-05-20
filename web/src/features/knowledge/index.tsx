@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Separator } from '@radix-ui/react-separator'
 import { useNavigate } from '@tanstack/react-router'
 import {
   IconAdjustmentsHorizontal,
@@ -23,11 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { KnowledgeSettingsDialog } from './components/knowledge-settings'
 import { knowledges } from './data/konwledge'
 import { KnowledgeItem, IconType } from './data/schema'
 
@@ -41,10 +42,26 @@ export default function Knowledge() {
   const [sort, setSort] = useState('ascending')
   const [type, setType] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
+
+  const [opened, setOpened] = useState(false)
+
+  const [currentRow, setCurrentRow] = useState<KnowledgeItem>()
   const navigate = useNavigate()
 
-  const navigateCreateKnowledge = () => {
-    navigate({ to: '/knowledge/create' })
+  const createKnowledge = () => {
+    setOpened(true)
+  }
+
+  const updateKnowledge = (row: KnowledgeItem) => {
+    setOpened(true)
+    setCurrentRow(row)
+  }
+
+  const goToDetail = (id: string) => {
+    navigate({
+      to: '/knowledge/detail/$id/documents',
+      params: { id: id },
+    })
   }
 
   const filteredApps = knowledges
@@ -56,19 +73,19 @@ export default function Knowledge() {
     .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
   const renderCardIcon = (icon: IconType) => {
-    if (icon === IconType.IconBrandDatabricks) {
+    if (icon === 'IconBrandDatabricks') {
       return <IconBrandDatabricks />
     }
 
-    if (icon === IconType.IconDatabase) {
+    if (icon === 'IconDatabase') {
       return <IconDatabase />
     }
 
-    if (icon === IconType.IconFolderFilled) {
+    if (icon === 'IconFolderFilled') {
       return <IconFolderFilled />
     }
 
-    if (icon === IconType.IconFolders) {
+    if (icon === 'IconFolders') {
       return <IconFolders />
     }
 
@@ -79,14 +96,10 @@ export default function Knowledge() {
     return (
       <li
         className='group flex cursor-pointer flex-col rounded-lg border p-4 hover:shadow-md'
-        onClick={navigateCreateKnowledge}
+        onClick={createKnowledge}
       >
         <div className='mb-4 flex h-12 items-center gap-4'>
-          <Button
-            variant='outline'
-            size='icon'
-            onClick={navigateCreateKnowledge}
-          >
+          <Button variant='outline' size='icon' onClick={createKnowledge}>
             <IconPlus />
           </Button>
           <div className='flex w-[calc(100%-56px)] flex-col'>
@@ -95,7 +108,7 @@ export default function Knowledge() {
             </h2>
           </div>
         </div>
-        <div className='mb-8 max-w-xs'>
+        <div className='max-w-xs'>
           <p className='line-clamp-3 overflow-hidden text-gray-500 select-none'>
             Import your own text data or write data in real time via webhooks to
             enhance the context of LLM.
@@ -107,54 +120,59 @@ export default function Knowledge() {
 
   const renderCard = (item: KnowledgeItem) => {
     return (
-      <>
-        <li
-          key={item.name}
-          className='group relative flex flex-col rounded-lg border p-4 hover:shadow-md'
-        >
-          <div className='mb-4 flex items-center gap-4'>
-            <div
-              className={`bg-muted flex size-10 items-center justify-center rounded-lg p-2`}
-            >
-              {renderCardIcon(item.icon)}
+      <li
+        key={item.id}
+        className='group relative flex cursor-pointer flex-col rounded-lg border p-4 hover:shadow-md'
+        onClick={() => {
+          goToDetail(item.id)
+        }}
+      >
+        <div className='mb-4 flex items-center gap-4'>
+          <div
+            className={`bg-muted flex size-10 items-center justify-center rounded-lg p-2`}
+          >
+            {renderCardIcon(item.icon)}
+          </div>
+          <div className='flex w-[calc(100%-56px)] flex-col'>
+            <h2 className='truncate font-semibold'>{item.name}</h2>
+            <div className='truncate'>
+              <span className='text-muted-foreground text-sm'>
+                {item.documents} document
+              </span>
+              <span className='text-muted-foreground ml-2 text-sm'>
+                {item.relatedApplications} related applications
+              </span>
             </div>
-            <div className='flex w-[calc(100%-56px)] flex-col'>
-              <h2 className='truncate font-semibold'>{item.name}</h2>
-              <div className='truncate'>
-                <span className='text-muted-foreground text-sm'>
-                  {item.documents} document
-                </span>
-                <span className='text-muted-foreground ml-2 text-sm'>
-                  {item.relatedApplications} related applications
-                </span>
-              </div>
-            </div>
           </div>
-          <div className='mb-8 max-w-xs'>
-            <p className='line-clamp-2 overflow-hidden text-gray-500'>
-              {item.desc}
-            </p>
-          </div>
-          <div className='absolute right-4 -bottom-2 flex gap-1 opacity-0 transition-all duration-300 ease-in-out group-hover:-translate-y-4 group-hover:opacity-100'>
-            <Button
-              size='icon'
-              type='button'
-              variant='ghost'
-              className='h-8 rounded-md'
-            >
-              <IconEdit size={20} className='stroke-muted-foreground' />
-            </Button>
-            <Button
-              size='icon'
-              type='button'
-              variant='ghost'
-              className='h-8 rounded-md'
-            >
-              <IconTrash size={20} className='stroke-muted-foreground' />
-            </Button>
-          </div>
-        </li>
-      </>
+        </div>
+        <div className='mb-8 max-w-xs'>
+          <p className='line-clamp-2 overflow-hidden text-gray-500'>
+            {item.desc}
+          </p>
+        </div>
+        <div className='absolute right-4 -bottom-2 flex gap-1 opacity-0 transition-all duration-300 ease-in-out group-hover:-translate-y-4 group-hover:opacity-100'>
+          <Button
+            size='icon'
+            type='button'
+            variant='ghost'
+            className='h-8 rounded-md'
+            onClick={(e) => {
+              e.stopPropagation()
+              updateKnowledge(item)
+            }}
+          >
+            <IconEdit size={20} className='stroke-muted-foreground' />
+          </Button>
+          <Button
+            size='icon'
+            type='button'
+            variant='ghost'
+            className='h-8 rounded-md'
+          >
+            <IconTrash size={20} className='stroke-muted-foreground' />
+          </Button>
+        </div>
+      </li>
     )
   }
 
@@ -222,6 +240,15 @@ export default function Knowledge() {
           {filteredApps.map(renderCard)}
         </ul>
       </Main>
+
+      <KnowledgeSettingsDialog
+        open={opened}
+        onOpenChange={() => {
+          setOpened(false)
+          setCurrentRow(undefined)
+        }}
+        currentRow={currentRow}
+      />
     </>
   )
 }
