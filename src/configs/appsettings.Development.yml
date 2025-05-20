@@ -9,3 +9,8 @@ Postgres:
   User: postgres
   Password: postgres
   Database: deepagenix
+
+RagIndex:
+  Elasticsearch:
+    Url: http://localhost:9201
+    Password: 

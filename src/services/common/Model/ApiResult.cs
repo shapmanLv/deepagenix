@@ -2,12 +2,12 @@ namespace DeepAgenix.Common.Model;
 public class ApiResult
 {
     public ApiResult() { }
-    public ApiResult(bool success, string msg)
+    public ApiResult(ApiResultCode apiResultCode, string msg)
     {
-        Success = success;
+        Code = apiResultCode;
         Msg = msg;
     }
-    public bool Success { get; set; } = true;
+    public ApiResultCode Code { get; set; } = ApiResultCode.Success;
     public string Msg { get; set; } = "";
 }
 
@@ -17,24 +17,9 @@ public class ApiResult<T> : ApiResult
     public T? Data { get; set; }
 }
 
-public class BaseController
+public enum ApiResultCode
 {
-    private ApiResult ExecuteAndReturn(Action action)
-    {
-        action();
-        return new ApiResult();
-    }
-    public ApiResult Execute(Action handler)
-        => ExecuteAndReturn(() => handler());
-    public ApiResult<TReturn> Execute<TReturn>(Func<TReturn> hander)
-        => new ApiResult<TReturn>(hander());
-    private async Task<ApiResult> ExecuteAndReturnAsync(Func<Task> func)
-    {
-        await func();
-        return new ApiResult();
-    }
-    public async Task<ApiResult> Execute(Func<Task> handler)
-        => await ExecuteAndReturnAsync(() => handler());
-    public async Task<ApiResult<TReturn>> Execute<TReturn>(Func<Task<TReturn>> handler)
-        => new ApiResult<TReturn>(await handler());
+    Success = 0,
+    BadRequest = 1,
+    InternalServerError = 500,
 }

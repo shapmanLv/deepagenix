@@ -1,0 +1,6 @@
+
+## ik plugin all release version
+https://release.infinilabs.com/analysis-ik/stable/
+
+## ik plugin install
+./bin/elasticsearch-plugin install https://release.infinilabs.com/analysis-ik/stable/elasticsearch-analysis-ik-9.0.1.zip

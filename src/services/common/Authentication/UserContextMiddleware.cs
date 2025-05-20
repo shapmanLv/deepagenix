@@ -10,7 +10,7 @@ public class UserContextMiddleware(RequestDelegate next)
         {
             var userIdClaim = context.User.FindFirst(JwtRegisteredClaimNames.Sub) ?? context.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
             if (userIdClaim is not null && long.TryParse(userIdClaim.Value, out var userId))
-                userContext.UserId = userId;
+                userContext.SetUserId(userId);
         }
 
         await next(context);

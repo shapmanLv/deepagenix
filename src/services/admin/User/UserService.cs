@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using SqlSugar;
 
 namespace DeepAgenix.Admin.User;
+
 public class UserService(IOptions<JwtTokenOption> options, SqlSugarClient sqlSugarClient, IUserContext userContext)
 {
     public async Task<TokenVo> LoginAsync(long? userId = null, bool? isAnonymousUser = false)
@@ -33,7 +34,7 @@ public class UserService(IOptions<JwtTokenOption> options, SqlSugarClient sqlSug
                 IsAnonymousUser = u.Username == null,
             })
             .FirstAsync()
-            .AssertNotNull("Refresh token expired or invalid. Please log in again", statusCode: 401);
+            .AssertNotNull("刷新令牌已过期或无效，请重新登录", statusCode: 401);
         sqlSugarClient.BeginTran();
         try
         {
@@ -56,7 +57,7 @@ public class UserService(IOptions<JwtTokenOption> options, SqlSugarClient sqlSug
     {
         await sqlSugarClient.Queryable<Users>()
             .AnyAsync(_ => _.Deleted == false && _.Username.Equals(username.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            .AssertFalse("The username is already taken. Please choose a different one.");
+            .AssertFalse("该用户名已被占用，请选择其他用户名");
         password = new PasswordHasher<string>().HashPassword(username, password);
         sqlSugarClient.BeginTran();
         try
@@ -80,15 +81,21 @@ public class UserService(IOptions<JwtTokenOption> options, SqlSugarClient sqlSug
     {
         var user = await sqlSugarClient.Queryable<Users>()
             .FirstAsync(_ => _.Deleted == false && _.Username.Equals(username.Trim(), StringComparison.CurrentCultureIgnoreCase))
-            .AssertNotNull("The user does not exist. Please check your username or register for a new account.");
+            .AssertNotNull("用户不存在，请检查用户名或先注册账号");
         (new PasswordHasher<string>().VerifyHashedPassword(user.Username, user.Password, password) is PasswordVerificationResult.Success)
-        .AssertTrue("Incorrect password. Please try again.");
+        .AssertTrue("密码不正确，请重试");
         return await LoginAsync(userId: user.Id, isAnonymousUser: false);
     }
-    
+
     public async Task<TokenVo> AnonymousRegisterAsync(string username, string password)
-    {
-        userContext.UserId.AssertNotNull("Unable to identify the current anonymous user. Please try again or start a new session.");
-        return await RegisterAsync(username, password, userContext.UserId);
-    }
+        => await RegisterAsync(username, password, userContext.GetUserId());
+
+    public async Task LogoutAsync()
+        => await sqlSugarClient.Updateable<RefreshToken>()
+            .SetColumns(_ => _.Enable == false)
+            .Where(_ =>
+                _.UserId == userContext.GetUserId()
+                && _.Enable == true
+                && _.Deleted == false)
+            .ExecuteCommandAsync();
 }

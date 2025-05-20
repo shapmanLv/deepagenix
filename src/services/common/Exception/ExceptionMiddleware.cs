@@ -15,7 +15,7 @@ public class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, RequestDel
         {
             context.Response.StatusCode = ex.StatusCode;
             context.Response.ContentType = "application/json";
-            var apiResult = new ApiResult(false, ex.Msg);
+            var apiResult = new ApiResult(ApiResultCode.BadRequest, ex.Msg);
             await context.Response.WriteAsJsonAsync(apiResult);
         }
         catch (Exception ex)
@@ -23,7 +23,7 @@ public class ExceptionMiddleware(ILogger<ExceptionMiddleware> logger, RequestDel
             logger.LogError(ex, "全局异常拦截器捕获到异常");
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = "application/json";
-            var apiResult = new ApiResult(false, "Internal Server Error");
+            var apiResult = new ApiResult(ApiResultCode.InternalServerError, "Internal Server Error");
             await context.Response.WriteAsJsonAsync(apiResult);
         }
     }

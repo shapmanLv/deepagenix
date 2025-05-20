@@ -20,6 +20,8 @@ if [ ! -f appdata/nginx/nginx.conf ]; then
     touch appdata/nginx/upstreams/servers_main.conf
 fi
 
+echo "📄 检查 elasticsearch 配置文件 和 插件..."
+
 echo "🚀 启动服务..."
 docker-compose up -d
 

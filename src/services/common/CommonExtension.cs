@@ -1,5 +1,6 @@
 using System.Text;
 using DeepAgenix.Common.Authentication;
+using DeepAgenix.Common.ModelGateway;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace DeepAgenix.Common;
+
 public static class CommonExtension
 {
     private static bool registered = false;
@@ -39,7 +41,8 @@ public static class CommonExtension
         });
         services.AddAuthorization();
         services.AddScoped<IUserContext, UserContext>();
-        
+        services.AddModelGateway(configuration);
+
         return services;
     }
 }

@@ -1,7 +1,26 @@
-Knolewdge:
+Knowledge:
   StorageType: Local                        # 文件存储方式
   Local:
     BaseFolder: knowledge                   # 文件本地存储文件夹
+  Languages:                                # 知识库支持的语言列表
+    - Name: 多语言
+      Value: mul                            # mul 是特殊标记，不可改变
+    - Name: 简体中文
+      Value: zh-CN
+    - Name: 英语
+      Value: en-US
+    - Name: 繁体中文
+      Value: zh-TW
+    - Name: 日语
+      Value: ja-JP
+    - Name: 韩语
+      Value: ko-KR
+    - Name: 法语
+      Value: fr-FR
+    - Name: 德语
+      Value: de-DE
+    - Name: 西班牙语
+      Value: es-ES
 
 Jwt:
   Secret: A0XB9KV6Eo9^AZt@6VBdPVoEF3eNg6@R  # 32位长秘钥
@@ -10,3 +29,121 @@ Jwt:
   ExpireMinutes: 120                        # access token 有效期
   RefreshTokenExpireDays: 7                 # refresh token 有效期
   AnonymousUserTokenExpireMonths: 120       # 匿名用户 access token 有效期
+
+RagIndex:
+  Type: elasticsearch                       # rag 索引存储类型
+  Participles:                              # 分词配置
+    - Type: elasticsearch                   # elasticsearch 分词插件配置
+      Description: 由Elasticsearch插件社区生态则提供的多样化、定制化的文本处理能力，使得针对不同语言及专业领域的复杂搜索需求得以高效实现。
+      Plugins:                              # 分词插件
+        - Name: ik
+          Value: analysis-ik
+          Description: Github社区支持的面向中文的分词插件，拥有活跃的社区生态，提供了丰富的扩展和定制化选项，极大地增强了对中文内容的搜索和处理能力。
+          Icon: https://pica.zhimg.com/v2-0d7befa34cd7921db34cc249536ee0f8_r.jpg?source=2c26e567
+          Languages:                        # 插件适用的语言
+            - zh-CN
+        - Name: Kuromoji
+          Value: analysis-kuromoji
+          Description: Elasticsearch官方支持的日语分词插件，它使用了名为 Kuromoji 的日语形态学分析库。Kuromoji 能够有效地处理现代和古典日语文本，包括平假名、片假名、汉字等，并能进行词性标注。
+          Icon: https://pica.zhimg.com/v2-0d7befa34cd7921db34cc249536ee0f8_r.jpg?source=2c26e567
+          Languages:
+            - ja-JPa
+        - Name: english
+          Value: english
+          Description: Elasticsearch内置的面向英文的分析工具，它提供了包括停用词过滤和词干提取在内的高级语言处理功能，旨在提高对英文文本搜索的精确度和相关性。
+          Icon: https://pica.zhimg.com/v2-0d7befa34cd7921db34cc249536ee0f8_r.jpg?source=2c26e567
+          Languages: 
+            - en-US
+        - Name: ICU
+          Value: analysis-icu
+          Description: Elasticsearch中集成的国际化文本处理工具，不同于特定语言的插件，它基于Unicode标准提供全面的语言支持和强大的分词功能，适用于包括英文、中文、日文和韩文等多语言文本的精确处理与搜索。
+          Icon: https://pica.zhimg.com/v2-0d7befa34cd7921db34cc249536ee0f8_r.jpg?source=2c26e567
+          Languages:
+            - mul                            # mul 代表所有语言都支持，特殊标记，不可修改
+
+Model:
+  Embeddings:
+    - Name: bge-large-zh-v1.5
+      Value: bge-large-zh-v1.5
+      Description: bge-large-zh-v1.5 是一个大型中文文本嵌入模型，是 BGE (BAAI General Embedding) 系列的一部分。该模型在 C-MTEB 基准测试中表现出色，在 31 个数据集上的平均得分为 64.53，在检索、语义相似度、文本对分类等多个任务中都取得了优异成绩。它支持最大 512 个 token 的输入长度，适用于各种中文自然语言处理任务，如文本检索、语义相似度计算等。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/BAAI.svg
+      Dimension: 1024                     # 向量维度
+      Developer: 智源研究所
+      Languages:
+        - zh-CN
+      Endpoints:
+        - url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000                       # 每个中允许的总请求数
+          TPM: 50000                      # 每分钟允许的总token数
+          ModelProvider: openai           # 填 openai 或 ollama
+    - Name: bge-large-en-v1.5
+      Value: bge-large-en-v1.5
+      Description: bge-large-en-v1.5 是一个大型英文文本嵌入模型，是 BGE (BAAI General Embedding) 系列的一部分。它在 MTEB 基准测试中取得了优异的表现，在 56 个数据集上的平均得分为 64.23，在检索、聚类、文本对分类等多个任务中表现出色。该模型支持最大 512 个 token 的输入长度，适用于各种自然语言处理任务，如文本检索、语义相似度计算等。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/BAAI.svg
+      Dimension: 1024         
+      Developer: 智源研究所
+      Languages:
+        - en-US
+      Endpoints:
+        - Url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000
+          TPM: 50000  
+          ModelProvider: openai
+    - Name: bge-m3
+      Value: bge-m3
+      Description: BGE-M3 是多功能、多语言、多粒度的文本嵌入模型。它支持三种常见的检索功能：密集检索、多向量检索和稀疏检索。该模型可以处理超过100种语言，并且能够处理从短句到长达8192个词元的长文档等不同粒度的输入。BGE-M3在多语言和跨语言检索任务中表现出色，在 MIRACL 和 MKQA 等基准测试中取得了领先结果。它还具有处理长文档检索的能力，在 MLDR 和 NarritiveQA 等数据集上展现了优秀性。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/BAAI.svg
+      Dimension: 1024         
+      Developer: 智源研究所
+      Languages:
+        - mul                             # 特殊标记，代表多语言
+      Endpoints:
+        - Url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000
+          TPM: 50000
+          ModelProvider: openai
+  Chats:
+    - Name: Qwen3-8B
+      Value: Qwen3-8B
+      Description: Qwen3-8B 是通义千问系列大语言模型，拥有 8.2B 参数量。该模型独特地支持在思考模式（适用于复杂逻辑推理、数学和编程）和非思考模式（适用于高效的通用对话）之间无缝切换，显著增强了推理能力。模型在数学、代码生成和常识逻辑推理上表现优异，并在创意写作、角色扮演和多轮对话等方面展现出卓越的人类偏好对齐能力。此外，该模型支持 100 多种语言和方言，具备出色的多语言指令遵循和翻译能力。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/Tongyi.svg
+      MaxContextTokens: 128                # 最大上下文长度，单位 k
+      Developer: 通义千问
+      Series: Qwen3
+      Endpoints:
+        - url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000
+          TPM: 50000
+          ModelProvider: openai
+    - Name: Qwen3-235B-A22B
+      Value: Qwen3-235B-A22B
+      Description: Qwen3-235B-A22B 是通义千问系列的大语言模型，采用混合专家（MoE）架构，拥有 235B 总参数量和 22B 激活参数量。该模型独特地支持在思考模式（适用于复杂逻辑推理、数学和编程）和非思考模式（适用于高效的通用对话）之间无缝切换，显著增强了推理能力。模型在数学、代码生成和常识逻辑推理上表现优异，并在创意写作、角色扮演和多轮对话等方面展现出卓越的人类偏好对齐能力。此外，该模型支持 100 多种语言和方言，具备出色的多语言指令遵循和翻译能力。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/Tongyi.svg
+      MaxContextTokens: 128                # 最大上下文长度，单位 k
+      Series: Qwen3
+      DisableUsageScenarios:               # 该模型禁用的使用场景（固定枚举值）
+        - DocumentSegment
+      Endpoints:
+        - url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000
+          TPM: 50000
+          ModelProvider: openai
+    - Name: DeepSeek-R1
+      Value: DeepSeek-R1
+      Description: DeepSeek-R1 是一款强化学习（RL）驱动的推理模型，解决了模型中的重复性和可读性问题。在 RL 之前，DeepSeek-R1 引入了冷启动数据，进一步优化了推理性能。它在数学、代码和推理任务中与 OpenAI-o1 表现相当，并且通过精心设计的训练方法，提升了整体效果。
+      Icon: https://sf-maas-uat-prod.oss-cn-shanghai.aliyuncs.com/Model_LOGO/deepseek-st.svg
+      MaxContextTokens: 64
+      Series: DeepSeek
+      DisableUsageScenarios:
+        - DocumentSegment
+      Endpoints:
+        - url: https://xxxx.com/v1
+          ApiKey: sk-212wdwdwede
+          RPM: 1000
+          TPM: 50000
+          ModelProvider: openai
