@@ -20,10 +20,15 @@ declare module 'axios' {
   }
 }
 
+export enum CodeStatus {
+  Success = 0,
+  Error = 1,
+}
+
 export type BaseResponse<T = unknown> = {
   data: T
   msg: string
-  success: boolean
+  code: CodeStatus
 }
 
 export type BusinessError = Error & {
@@ -42,8 +47,8 @@ class HttpClient {
 
   constructor() {
     this.instance = axios.create({
-      baseURL: '/da',
-      timeout: 15_000,
+      baseURL: '/deepagenix-api',
+      timeout: 15000,
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
@@ -78,7 +83,7 @@ class HttpClient {
   private handleResponse(response: AxiosResponse<BaseResponse>): AxiosResponse {
     const { data } = response
 
-    if (!data.success) {
+    if (data.code !== CodeStatus.Success) {
       toast.error(data?.msg || 'Network Error', {
         position: 'top-right',
         duration: 5000,
@@ -168,7 +173,6 @@ class HttpClient {
       document.body.appendChild(link)
       link.click()
 
-      // 清理资源
       link.remove()
       window.URL.revokeObjectURL(downloadUrl)
     } catch (error) {

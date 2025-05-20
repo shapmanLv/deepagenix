@@ -15,10 +15,10 @@ export default function SignIn() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>Login</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>登录</CardTitle>
           <CardDescription>
-            Enter your user and password below to <br />
-            log into your account
+            在下面输入您的用户名和密码 <br />
+            登录您的账户
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -26,12 +26,12 @@ export default function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            Don't have an account?{' '}
+            沒有账户？
             <Link
               to='/sign-up'
               className='hover:text-primary underline underline-offset-4'
             >
-              Sign up
+              注册
             </Link>
             .
           </p>

@@ -28,33 +28,32 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { KnowledgeSettingsDialog } from './components/knowledge-settings'
+import {
+  KnowledgeSettingsDialog,
+  KnowledgeType,
+} from './components/knowledge-settings'
 import { knowledges } from './data/konwledge'
 import { KnowledgeItem, IconType } from './data/schema'
 
-const knowledgeText = new Map<string, string>([
-  ['all', 'All'],
-  ['connected', 'Connected'],
-  ['notConnected', 'Not Connected'],
-])
-
 export default function Knowledge() {
   const [sort, setSort] = useState('ascending')
-  const [type, setType] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
 
   const [opened, setOpened] = useState(false)
+  const [knowledgeType, setKnowledgeType] = useState<KnowledgeType>('create')
 
   const [currentRow, setCurrentRow] = useState<KnowledgeItem>()
   const navigate = useNavigate()
 
   const createKnowledge = () => {
     setOpened(true)
+    setKnowledgeType('create')
   }
 
   const updateKnowledge = (row: KnowledgeItem) => {
     setOpened(true)
     setCurrentRow(row)
+    setKnowledgeType('update')
   }
 
   const goToDetail = (id: string) => {
@@ -103,15 +102,12 @@ export default function Knowledge() {
             <IconPlus />
           </Button>
           <div className='flex w-[calc(100%-56px)] flex-col'>
-            <h2 className='truncate font-semibold select-none'>
-              Create a knowledge base
-            </h2>
+            <h2 className='truncate font-semibold select-none'>创建知识库</h2>
           </div>
         </div>
         <div className='max-w-xs'>
           <p className='line-clamp-3 overflow-hidden text-gray-500 select-none'>
-            Import your own text data or write data in real time via webhooks to
-            enhance the context of LLM.
+            导入您自己的文本数据以增强 LLM 的上下文。
           </p>
         </div>
       </li>
@@ -190,26 +186,16 @@ export default function Knowledge() {
       {/* ===== Content ===== */}
       <Main fixed>
         <div>
-          <h1 className='text-2xl font-bold tracking-tight'>Knowledge</h1>
+          <h1 className='text-2xl font-bold tracking-tight'>知识库</h1>
         </div>
         <div className='my-4 flex items-end justify-between sm:my-0 sm:items-center'>
           <div className='flex flex-col gap-4 sm:my-4 sm:flex-row'>
             <Input
-              placeholder='Filter knowledge...'
+              placeholder='搜索知识库'
               className='h-9 w-40 lg:w-[250px]'
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <Select value={type} onValueChange={setType}>
-              <SelectTrigger className='w-36'>
-                <SelectValue>{knowledgeText.get(type)}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>All</SelectItem>
-                <SelectItem value='connected'>Connected</SelectItem>
-                <SelectItem value='notConnected'>Not Connected</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           <Select value={sort} onValueChange={setSort}>
@@ -222,13 +208,13 @@ export default function Knowledge() {
               <SelectItem value='ascending'>
                 <div className='flex items-center gap-4'>
                   <IconSortAscendingLetters size={16} />
-                  <span>Ascending</span>
+                  <span>升序</span>
                 </div>
               </SelectItem>
               <SelectItem value='descending'>
                 <div className='flex items-center gap-4'>
                   <IconSortDescendingLetters size={16} />
-                  <span>Descending</span>
+                  <span>降序</span>
                 </div>
               </SelectItem>
             </SelectContent>
@@ -243,6 +229,7 @@ export default function Knowledge() {
 
       <KnowledgeSettingsDialog
         open={opened}
+        type={knowledgeType}
         onOpenChange={() => {
           setOpened(false)
           setCurrentRow(undefined)

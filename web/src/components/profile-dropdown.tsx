@@ -64,13 +64,13 @@ export function ProfileDropdown() {
           onClick={() => {
             clearTokens()
             navigate({ to: '/sign-in', replace: true })
-            toast.success('Log out', {
+            toast.success('退出登录', {
               position: 'top-right',
               duration: 5000,
             })
           }}
         >
-          Log out
+          退出登录
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

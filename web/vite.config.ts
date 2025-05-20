@@ -15,11 +15,11 @@ export default defineConfig(({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd(), '')
   // 定义代理配置类型
   const proxyConfig: Record<string, string | ProxyOptions> = {
-    '/da': {
+    '/deepagenix-api': {
       target: env.VITE_API_BASE_URL,
       changeOrigin: true,
       secure: false,
-      rewrite: (path: string) => path.replace(/^\/da/, ''),
+      rewrite: (path: string) => path.replace(/^\/deepagenix-api/, ''),
     },
   }
 

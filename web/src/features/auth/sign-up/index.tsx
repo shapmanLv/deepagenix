@@ -14,17 +14,15 @@ export default function SignUp() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>
-            Create an account
-          </CardTitle>
+          <CardTitle className='text-lg tracking-tight'>创建一个帐户</CardTitle>
           <CardDescription>
-            Enter your email and password to create an account. <br />
-            Already have an account?
+            输入您的电子邮件和密码来创建帐户。 <br />
+            已有账户？
             <Link
               to='/sign-in'
               className='hover:text-primary underline underline-offset-4'
             >
-              Sign In
+              登入
             </Link>
           </CardDescription>
         </CardHeader>

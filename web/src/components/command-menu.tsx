@@ -39,22 +39,22 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type='hover' className='h-72 pr-1'>
           <CommandEmpty>No results found.</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
-            <CommandGroup key={group.title} heading={group.title}>
-              {group.items.map((navItem, i) => {
+          {sidebarData?.navGroups?.map((group) => (
+            <CommandGroup key={group?.title} heading={group?.title}>
+              {group?.items?.map((navItem, i) => {
                 if (navItem.url)
                   return (
                     <CommandItem
-                      key={`${navItem.url}-${i}`}
-                      value={navItem.title}
+                      key={`${navItem?.url}-${i}`}
+                      value={navItem?.title}
                       onSelect={() => {
-                        runCommand(() => navigate({ to: navItem.url }))
+                        runCommand(() => navigate({ to: navItem?.url }))
                       }}
                     >
                       <div className='mr-2 flex h-4 w-4 items-center justify-center'>
                         <IconArrowRightDashed className='text-muted-foreground/80 size-2' />
                       </div>
-                      {navItem.title}
+                      {navItem?.title}
                     </CommandItem>
                   )
 

@@ -11,7 +11,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const checkAuthentication = async () => {
       const authToken = useAuthStore.getState().accessToken
       if (!authToken) {
-        startLoading(undefined, 1000)
+        startLoading('', 1000)
         navigate({ to: '/sign-in', replace: true })
         return
       }
