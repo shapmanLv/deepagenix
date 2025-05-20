@@ -54,12 +54,18 @@ const queryClient = new QueryClient({
           const redirect = `${router.history.location.href}`
           router.navigate({ to: '/sign-in', search: { redirect } })
         }
+
         if (error.response?.status === 500) {
           toast.error('Internal Server Error!')
           router.navigate({ to: '/500' })
         }
+
         if (error.response?.status === 403) {
-          // router.navigate("/forbidden", { replace: true });
+          router.navigate({ to: '/403', replace: true })
+        }
+
+        if (error.response?.status === 404) {
+          router.navigate({ to: '/404', replace: true })
         }
       }
     },

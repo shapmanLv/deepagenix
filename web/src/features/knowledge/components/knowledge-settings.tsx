@@ -44,21 +44,21 @@ import { IconTypeSchema, KnowledgeItem } from '../data/schema'
 const formSchema = z.object({
   name: z
     .string()
-    .min(2, { message: 'Name must be at least 2 characters' })
-    .max(50, { message: 'Name cannot exceed 50 characters' }),
+    .min(2, { message: '名称必须至少包含 2 个字符' })
+    .max(50, { message: '名称不能超过50个字符' }),
   icon: IconTypeSchema.refine((val) => !!val, {
-    message: 'Icon selection is required',
+    message: '需要选择图标',
   }),
-  desc: z
-    .string()
-    .max(200, { message: 'Description cannot exceed 200 characters' })
-    .optional(),
+  desc: z.string().max(200, { message: '描述不能超过200个字符' }).optional(),
 })
 
 type KnowledgeForm = z.infer<typeof formSchema>
 
+export type KnowledgeType = 'create' | 'update'
+
 interface Props {
   open: boolean
+  type: KnowledgeType
   onOpenChange: (open: boolean) => void
   currentRow?: KnowledgeItem
 }
@@ -71,10 +71,11 @@ const defaultValues: KnowledgeForm = {
 
 export function KnowledgeSettingsDialog({
   open,
+  type,
   onOpenChange,
   currentRow,
 }: Props) {
-  const isUpdate = !!currentRow
+  const isUpdate = type === 'update'
 
   const form = useForm<KnowledgeForm>({
     resolver: zodResolver(formSchema),
@@ -102,12 +103,10 @@ export function KnowledgeSettingsDialog({
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-left'>
           <DialogTitle>
-            {isUpdate ? 'Knowledge Settings' : 'Create New Knowledge Base'}{' '}
+            {isUpdate ? '知识库设置' : '创建一个新的知识库'}
           </DialogTitle>
           <DialogDescription>
-            {isUpdate
-              ? 'Update your knowledge base。'
-              : 'Configure a new knowledge repository for your organization.'}
+            构建结构化知识库，为大语言模型提供实时、准确的上下文支持，提升大模型回复准确度。
           </DialogDescription>
         </DialogHeader>
         <div className='-mr-4 h-[26.25rem] w-full overflow-y-auto py-1 pr-2 pl-1'>
@@ -122,13 +121,11 @@ export function KnowledgeSettingsDialog({
                 name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Knowledge Name</FormLabel>
+                    <FormLabel>知识库名称</FormLabel>
                     <FormControl>
-                      <Input placeholder='Enter knowledge name' {...field} />
+                      <Input placeholder='请输入您的知识库名称' {...field} />
                     </FormControl>
-                    <FormDescription>
-                      2-50 characters, required field
-                    </FormDescription>
+                    <FormDescription>2-50个字符，必填字段</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -139,7 +136,7 @@ export function KnowledgeSettingsDialog({
                 name='icon'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select Icon</FormLabel>
+                    <FormLabel>选择图标</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -186,18 +183,16 @@ export function KnowledgeSettingsDialog({
                 name='desc'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>知识库描述</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder='Enter knowledge description'
+                        placeholder='请输入知识库描述'
                         className='resize-none'
                         {...field}
                         value={field.value || ''}
                       />
                     </FormControl>
-                    <FormDescription>
-                      Optional, max 200 characters
-                    </FormDescription>
+                    <FormDescription>可选，最多 200 个字符</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

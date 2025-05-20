@@ -15,7 +15,7 @@ export interface LoginParams {
 export function useLogin() {
   return useMutation({
     mutationFn: (body: LoginParams) =>
-      httpClient.post<LoginResponse>(`/api/user/login`, body),
+      httpClient.post<LoginResponse>(`/da/api/user/login`, body),
   })
 }
 
@@ -27,7 +27,7 @@ export interface RegisterParams {
 export function useRegister() {
   return useMutation({
     mutationFn: (body: RegisterParams) =>
-      httpClient.post<LoginResponse>(`/api/user/register`, body),
+      httpClient.post<LoginResponse>(`/da/api/user/register`, body),
   })
 }
 
@@ -39,7 +39,7 @@ export function useRefreshToken() {
   return useMutation({
     mutationFn: (params: RefreshTokenParams) =>
       httpClient.post<LoginResponse>(
-        `/api/user/refresh/${params?.refreshToken}`
+        `/da/api/user/refresh/${params?.refreshToken}`
       ),
   })
 }

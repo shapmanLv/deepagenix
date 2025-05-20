@@ -23,19 +23,19 @@ type SignUpFormProps = HTMLAttributes<HTMLFormElement>
 
 const formSchema = z
   .object({
-    username: z.string().min(1, { message: 'Please enter your email' }),
+    username: z.string().min(1, { message: '请输入您的账号名称' }),
     password: z
       .string()
       .min(1, {
-        message: 'Please enter your password',
+        message: '请输入您的密码',
       })
       .min(7, {
-        message: 'Password must be at least 7 characters long',
+        message: '密码长度必须至少为 7 个字符',
       }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match.",
+    message: '密码不匹配。',
     path: ['confirmPassword'],
   })
 
@@ -59,12 +59,12 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
       username: data.username,
       password: data.password,
     })
-    if (res.success) {
+    if (!res.code) {
       setTokens({
         accessToken: res?.data.accessToken,
         refreshToken: res?.data.refreshToken,
       })
-      toast.success('login success', {
+      toast.success('登录成功', {
         position: 'top-right',
         duration: 5000,
       })
@@ -86,9 +86,9 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
           name='username'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>账户</FormLabel>
               <FormControl>
-                <Input placeholder='Please enter your username' {...field} />
+                <Input placeholder='请输入您的账号名称' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -99,7 +99,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>密码</FormLabel>
               <FormControl>
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
@@ -112,7 +112,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
           name='confirmPassword'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              <FormLabel>确认密码</FormLabel>
               <FormControl>
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
@@ -121,7 +121,7 @@ export function SignUpForm({ className, ...props }: SignUpFormProps) {
           )}
         />
         <Button className='mt-2' disabled={isPending}>
-          Create Account
+          创建账号
         </Button>
       </form>
     </Form>

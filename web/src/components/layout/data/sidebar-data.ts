@@ -55,7 +55,7 @@ export const sidebarData: SidebarData = {
           icon: IconLayoutDashboard,
         },
         {
-          title: 'Knowledge',
+          title: '知识库',
           url: '/knowledge',
           icon: IconBook,
         },

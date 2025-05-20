@@ -2,7 +2,7 @@ import { HTMLAttributes } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useLogin } from '@/services/login'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
@@ -22,14 +22,14 @@ import { PasswordInput } from '@/components/password-input'
 type UserAuthFormProps = HTMLAttributes<HTMLFormElement>
 
 const formSchema = z.object({
-  username: z.string().min(1, { message: 'Please enter your username' }),
+  username: z.string().min(1, { message: '请输入您的账号名称' }),
   password: z
     .string()
     .min(1, {
-      message: 'Please enter your password',
+      message: '请输入您的密码',
     })
     .min(7, {
-      message: 'Password must be at least 7 characters long',
+      message: '密码长度必须至少为 7 个字符',
     }),
 })
 
@@ -50,7 +50,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       const res = await login(data)
-      if (res.success) {
+      if (!res.code) {
         setTokens({
           accessToken: res?.data.accessToken,
           refreshToken: res?.data.refreshToken,
@@ -80,9 +80,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           name='username'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>User</FormLabel>
+              <FormLabel>账户</FormLabel>
               <FormControl>
-                <Input placeholder='Please enter your Username' {...field} />
+                <Input placeholder='请输入您的账号名称' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,22 +93,22 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           name='password'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>密码</FormLabel>
               <FormControl>
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
               <FormMessage />
-              <Link
+              {/* <Link
                 to='/forgot-password'
                 className='text-muted-foreground absolute -top-0.5 right-0 text-sm font-medium hover:opacity-75'
               >
-                Forgot password?
-              </Link>
+                忘记密码?
+              </Link> */}
             </FormItem>
           )}
         />
         <Button className='mt-2' disabled={isPending}>
-          Login
+          登录
         </Button>
       </form>
     </Form>
