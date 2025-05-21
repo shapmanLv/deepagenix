@@ -42,6 +42,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { LanguageSelect } from '@/components/language-select'
 
 export type KnowledgeType = 'create' | 'update'
 
@@ -172,6 +173,21 @@ export function KnowledgeSettingsDialog({
                         </SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='language'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>选择语言</FormLabel>
+                    <LanguageSelect
+                      onChange={field.onChange}
+                      value={field.value}
+                    ></LanguageSelect>
                     <FormMessage />
                   </FormItem>
                 )}
