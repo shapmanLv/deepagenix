@@ -6,7 +6,7 @@ using DeepAgenix.Knowledge;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new SnowflakeIdConverter()));
 builder.Configuration.AddDeepAgenixConfigurationBuilder(builder.Environment.EnvironmentName);
 builder.Services.AddScoped(service => builder.Configuration.BuildSqlSugarClientInstance());
 var sqlSugarClient = builder.Configuration.BuildSqlSugarClientInstance();
