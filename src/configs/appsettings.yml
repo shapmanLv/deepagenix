@@ -74,8 +74,8 @@ Model:
       Endpoints:
         - url: https://xxxx.com/v1
           ApiKey: sk-212wdwdwede
-          RPM: 1000                       # 每个中允许的总请求数
-          TPM: 50000                      # 每分钟允许的总token数
+          RPM: 1000                       # 每分钟允许的请求数
+          TPM: 50000                      # 每分钟允许的token数
           ModelProvider: openai           # 填 openai 或 ollama
     - Name: bge-large-en-v1.5
       Value: bge-large-en-v1.5
