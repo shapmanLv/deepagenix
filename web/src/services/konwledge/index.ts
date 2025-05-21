@@ -17,7 +17,11 @@ export const useGetLanguages = () => {
     },
   })
 
-  return { data, isLoading }
+  const languages = useMemo(() => {
+    return data?.data ?? []
+  }, [data])
+
+  return { languages, isLoading }
 }
 
 export interface PluginsItem {
