@@ -13,6 +13,8 @@ import {
   IconSortDescendingLetters,
   IconTrash,
 } from '@tabler/icons-react'
+import { useGetKnowledges } from '@/services/konwledge'
+import { IconType, KnowledgeItem } from '@/services/konwledge/schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -32,10 +34,10 @@ import {
   KnowledgeSettingsDialog,
   KnowledgeType,
 } from './components/knowledge-settings'
-import { knowledges } from './data/konwledge'
-import { KnowledgeItem, IconType } from './data/schema'
 
 export default function Knowledge() {
+  const { knowledges, isLoading } = useGetKnowledges()
+
   const [sort, setSort] = useState('ascending')
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -64,7 +66,7 @@ export default function Knowledge() {
   }
 
   const filteredApps = knowledges
-    .sort((a, b) =>
+    ?.sort((a, b) =>
       sort === 'ascending'
         ? a.name.localeCompare(b.name)
         : b.name.localeCompare(a.name)
@@ -132,18 +134,18 @@ export default function Knowledge() {
           <div className='flex w-[calc(100%-56px)] flex-col'>
             <h2 className='truncate font-semibold'>{item.name}</h2>
             <div className='truncate'>
-              <span className='text-muted-foreground text-sm'>
+              {/* <span className='text-muted-foreground text-sm'>
                 {item.documents} document
               </span>
               <span className='text-muted-foreground ml-2 text-sm'>
                 {item.relatedApplications} related applications
-              </span>
+              </span> */}
             </div>
           </div>
         </div>
         <div className='mb-8 max-w-xs'>
           <p className='line-clamp-2 overflow-hidden text-gray-500'>
-            {item.desc}
+            {item.description}
           </p>
         </div>
         <div className='absolute right-4 -bottom-2 flex gap-1 opacity-0 transition-all duration-300 ease-in-out group-hover:-translate-y-4 group-hover:opacity-100'>

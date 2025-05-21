@@ -16,7 +16,7 @@ import './index.css'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error) => {

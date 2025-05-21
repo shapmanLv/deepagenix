@@ -1,5 +1,5 @@
+import { DocumentItem } from '@/services/konwledge/schema'
 import { nanoid } from 'nanoid'
-import { DocumentItem } from '../data/schema'
 
 const mockModes = ['edit', 'view', 'review', 'archive']
 const mockMetadata = ['draft', 'final', 'confidential', 'public']

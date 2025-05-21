@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -10,6 +9,11 @@ import {
   IconFolderFilled,
   IconFolders,
 } from '@tabler/icons-react'
+import {
+  FormKnowledgeItem,
+  FormKnowledgeItemSchema,
+  IconTypeSchema,
+} from '@/services/konwledge/schema'
 import { showSubmittedData } from '@/utils/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,21 +42,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { IconTypeSchema, KnowledgeItem } from '../data/schema'
-
-// Enhanced validation schema
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: '名称必须至少包含 2 个字符' })
-    .max(50, { message: '名称不能超过50个字符' }),
-  icon: IconTypeSchema.refine((val) => !!val, {
-    message: '需要选择图标',
-  }),
-  desc: z.string().max(200, { message: '描述不能超过200个字符' }).optional(),
-})
-
-type KnowledgeForm = z.infer<typeof formSchema>
 
 export type KnowledgeType = 'create' | 'update'
 
@@ -60,13 +49,19 @@ interface Props {
   open: boolean
   type: KnowledgeType
   onOpenChange: (open: boolean) => void
-  currentRow?: KnowledgeItem
+  currentRow?: FormKnowledgeItem
 }
 
-const defaultValues: KnowledgeForm = {
+const defaultValues: FormKnowledgeItem = {
   name: '',
-  icon: 'IconFolders',
-  desc: '',
+  description: '',
+  language: 'zh-CN',
+  icon: IconTypeSchema.Enum.IconFolders,
+  indexConfig: {
+    embeddingModel: '',
+    participlePlugin: '',
+    documentSegmentModel: '',
+  },
 }
 
 export function KnowledgeSettingsDialog({
@@ -77,8 +72,8 @@ export function KnowledgeSettingsDialog({
 }: Props) {
   const isUpdate = type === 'update'
 
-  const form = useForm<KnowledgeForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormKnowledgeItem>({
+    resolver: zodResolver(FormKnowledgeItemSchema),
     defaultValues: defaultValues,
   })
 
@@ -86,7 +81,7 @@ export function KnowledgeSettingsDialog({
     form.reset(currentRow || defaultValues)
   }, [currentRow, form])
 
-  const onSubmit = (values: KnowledgeForm) => {
+  const onSubmit = (values: FormKnowledgeItem) => {
     form.reset()
     showSubmittedData(values)
     onOpenChange(false)
@@ -147,25 +142,29 @@ export function KnowledgeSettingsDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='IconFolders'>
+                        <SelectItem value={IconTypeSchema.Enum.IconFolders}>
                           <div className='flex items-center gap-2'>
                             <IconFolders className='h-4 w-4' />
                             <span>Folder Group</span>
                           </div>
                         </SelectItem>
-                        <SelectItem value='IconFolderFilled'>
+                        <SelectItem
+                          value={IconTypeSchema.Enum.IconFolderFilled}
+                        >
                           <div className='flex items-center gap-2'>
                             <IconFolderFilled className='h-4 w-4' />
                             <span>Solid Folder</span>
                           </div>
                         </SelectItem>
-                        <SelectItem value='IconDatabase'>
+                        <SelectItem value={IconTypeSchema.Enum.IconDatabase}>
                           <div className='flex items-center gap-2'>
                             <IconDatabase className='h-4 w-4' />
                             <span>Database</span>
                           </div>
                         </SelectItem>
-                        <SelectItem value='IconBrandDatabricks'>
+                        <SelectItem
+                          value={IconTypeSchema.Enum.IconBrandDatabricks}
+                        >
                           <div className='flex items-center gap-2'>
                             <IconBrandDatabricks className='h-4 w-4' />
                             <span>Databricks</span>
@@ -180,7 +179,7 @@ export function KnowledgeSettingsDialog({
 
               <FormField
                 control={form.control}
-                name='desc'
+                name='description'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>知识库描述</FormLabel>
@@ -202,7 +201,7 @@ export function KnowledgeSettingsDialog({
         </div>
         <DialogFooter>
           <Button type='submit' form='knowledge-form'>
-            {isUpdate ? 'Update Knowledge Base' : 'Create Knowledge Base'}
+            {isUpdate ? '更新' : '创建'}
           </Button>
         </DialogFooter>
       </DialogContent>
