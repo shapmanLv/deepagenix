@@ -14,8 +14,8 @@ mkdir -p appdata/knowledge
 
 echo "📄 检查 nginx 配置文件..."
 if [ ! -f appdata/nginx/nginx.conf ]; then
-    cp -r src/gateway/nginx-upsync/conf.d appdata/nginx
-    cp -r src/gateway/nginx-upsync/nginx.conf appdata/nginx/nginx.conf
+    cp -r server/gateway/nginx-upsync/conf.d appdata/nginx
+    cp -r server/gateway/nginx-upsync/nginx.conf appdata/nginx/nginx.conf
     mkdir appdata/nginx/upstreams
     touch appdata/nginx/upstreams/servers_main.conf
 fi

@@ -15,13 +15,13 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH="${POETRY_HOME}/bin:${PATH}"
 
 WORKDIR /app
-COPY src/components/python ./src/components/python
-COPY src/components/python/pyproject.toml .
-COPY src/components/python/poetry.lock .
-COPY src/configs ./configs
+COPY server/components/python ./server/components/python
+COPY server/components/python/pyproject.toml .
+COPY server/components/python/poetry.lock .
+COPY server/configs ./configs
 
 RUN poetry install --no-interaction --no-ansi --only=main
-ENV PYTHONPATH=/app/src
+ENV PYTHONPATH=/app/server
 
 EXPOSE 8000
-CMD ["poetry", "run", "uvicorn", "src.components.python.main:app", "--host", "0.0.0.0"]
+CMD ["poetry", "run", "uvicorn", "server.components.python.main:app", "--host", "0.0.0.0"]

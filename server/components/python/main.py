@@ -3,7 +3,7 @@ import uvicorn
 import os
 from dotenv import load_dotenv
 
-from src.components.python.common.consul import register_to_consul
+from server.components.python.common.consul import register_to_consul
 
 
 def app() -> FastAPI:
