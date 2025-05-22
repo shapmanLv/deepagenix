@@ -1,8 +1,0 @@
-cluster.name: "deepagenix"
-network.host: 0.0.0.0
-http.cors.enabled: true
-http.cors.allow-origin: "*"
-xpack.security.enabled: false
-xpack.license.self_generated.type: basic
-xpack.security.http.ssl.enabled: false
-xpack.security.transport.ssl.enabled: false

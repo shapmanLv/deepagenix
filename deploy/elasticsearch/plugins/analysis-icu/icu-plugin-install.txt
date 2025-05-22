@@ -1,3 +1,0 @@
-
-## icu plugin install
-bin/elasticsearch-plugin install analysis-icu

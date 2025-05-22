@@ -1,3 +1,0 @@
-
-## kuromoji plugin install
-./bin/elasticsearch-plugin install analysis-kuromoji

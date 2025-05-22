@@ -87,3 +87,6 @@ htmlcov/
 
 # 本地临时内容文件夹
 appdata
+
+# sln解决方案
+deepagenix.sln

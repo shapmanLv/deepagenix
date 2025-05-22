@@ -37,6 +37,23 @@ services:
     depends_on:
       - main
 
+  elasticsearh:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.0.1
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms4096m -Xmx4096m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - ./appdata/elasticsearch/data:/usr/share/elasticsearch/data
+      - ./appdata/elasticsearch/plugins:/usr/share/elasticsearch/plugins
+      - ./appdata/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "${ELASTICSEARCH_PORT}:9200"
+      #- "9301:9300"
+
   main:
     image: deepagenix-main
     networks:
