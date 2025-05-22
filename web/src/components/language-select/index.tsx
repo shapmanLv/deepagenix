@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Skeleton } from '@/components/ui/skeleton'
 
 interface LanguageSelectProps {
   value?: string
@@ -18,24 +17,20 @@ export function LanguageSelect({ value, onChange }: LanguageSelectProps) {
 
   return (
     <div className='relative'>
-      <Select value={value} onValueChange={onChange} disabled={isLoading}>
-        {isLoading ? (
-          <Skeleton className='h-10 w-[180px] rounded-md' />
-        ) : (
-          <>
-            <SelectTrigger className='w-[180px]'>
-              <SelectValue placeholder='请选择语言' />
-            </SelectTrigger>
+      <Select value={value} onValueChange={onChange}>
+        <>
+          <SelectTrigger className='w-[180px]' loading={isLoading}>
+            <SelectValue placeholder='请选择语言' />
+          </SelectTrigger>
 
-            <SelectContent>
-              {languages?.map((language) => (
-                <SelectItem key={language.value} value={language.value}>
-                  {language.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </>
-        )}
+          <SelectContent>
+            {languages?.map((language) => (
+              <SelectItem key={language.value} value={language.value}>
+                {language.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </>
       </Select>
     </div>
   )
