@@ -1,7 +1,10 @@
 import { createLocalInstance } from '@/lib/localstorage'
 
-/** token */
+/** accessToken */
 export const localAccessToken = createLocalInstance('access-token')
 
-/**  token */
+/** refreshToken */
 export const localRefreshToken = createLocalInstance('refresh-token')
+
+/** expiresAtUtc */
+export const localExpiresAtUtc = createLocalInstance('expires-at-utc')

@@ -54,8 +54,9 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         setTokens({
           accessToken: res?.data.accessToken,
           refreshToken: res?.data.refreshToken,
+          expiresAtUtc: res?.data.expiresAtUtc,
         })
-        toast.success('login success', {
+        toast.success('登录成功', {
           position: 'top-right',
           duration: 5000,
         })
