@@ -5,6 +5,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios'
+import { LoginResponse } from '@/services/login'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -42,6 +43,10 @@ type RequestConfig = AxiosRequestConfig & {
   rawResponse?: boolean
 }
 
+// 在模块顶部定义并发控制变量（单例模式共享状态）
+let isRefreshing = false
+let refreshPromise: Promise<void> | null = null
+
 class HttpClient {
   private readonly instance: AxiosInstance
 
@@ -71,7 +76,59 @@ class HttpClient {
     const { requireAuth = true } = config
 
     if (requireAuth) {
-      const token = useAuthStore.getState().accessToken
+      const authStore = useAuthStore.getState()
+
+      // 检查 Token 是否过期（带缓冲期）
+      if (authStore.isAccessTokenExpired()) {
+        const refreshToken = authStore.refreshToken
+
+        // 无有效刷新令牌时直接中断
+        if (!refreshToken) {
+          authStore.clearTokens()
+          throw new Error('No refresh token available')
+        }
+
+        // 并发控制核心逻辑
+        if (!isRefreshing) {
+          isRefreshing = true
+
+          // 使用原生 axios 实例避免循环拦截（重要！）
+          refreshPromise = axios
+            .create({
+              baseURL: '/deepagenix-api',
+              timeout: 15000,
+              withCredentials: true,
+            })
+            .post<AxiosResponse<LoginResponse>>(
+              `/da/api/user/refresh/${refreshToken}`
+            )
+            .then(({ data }) => {
+              // 再次验证过期状态（防止竞态条件）
+              if (authStore.isAccessTokenExpired()) {
+                authStore.setTokens(data.data)
+              }
+            })
+            .catch((error) => {
+              // 统一清理令牌并跳转登录
+              authStore.clearTokens()
+              throw new Error(`Token refresh failed: ${error.message}`)
+            })
+            .finally(() => {
+              isRefreshing = false
+              refreshPromise = null
+            })
+        }
+
+        // 所有并发请求在此等待
+        try {
+          await refreshPromise
+        } catch (error) {
+          return Promise.reject(error)
+        }
+      }
+
+      // 最终设置最新 Authorization 头
+      const token = authStore.accessToken
       if (token) {
         config.headers.Authorization = `Bearer ${token}`
       }
