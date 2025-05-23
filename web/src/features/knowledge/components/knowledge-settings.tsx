@@ -42,7 +42,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { LanguageSelect } from '@/components/language-select'
+import { EmbeddingSelector } from '@/components/embedding-selector'
+import { LanguageSelector } from '@/components/language-select'
 
 export type KnowledgeType = 'create' | 'update'
 
@@ -138,7 +139,7 @@ export function KnowledgeSettingsDialog({
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className='w-[180px]'>
+                        <SelectTrigger className='w-[240px]'>
                           <SelectValue placeholder='Select icon type' />
                         </SelectTrigger>
                       </FormControl>
@@ -184,10 +185,25 @@ export function KnowledgeSettingsDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>选择语言</FormLabel>
-                    <LanguageSelect
+                    <LanguageSelector
                       onChange={field.onChange}
                       value={field.value}
-                    ></LanguageSelect>
+                    ></LanguageSelector>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='indexConfig.documentSegmentModel'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>选择嵌入模型</FormLabel>
+                    <EmbeddingSelector
+                      onChange={field.onChange}
+                      value={field.value}
+                    ></EmbeddingSelector>
                     <FormMessage />
                   </FormItem>
                 )}

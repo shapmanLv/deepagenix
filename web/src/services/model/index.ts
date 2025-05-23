@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { httpClient } from '@/lib/http-client'
 
@@ -25,7 +26,11 @@ export const useGetEmbeddings = () => {
     },
   })
 
-  return { data, isLoading }
+  const embeddings = useMemo(() => {
+    return data?.data ?? []
+  }, [data])
+
+  return { embeddings, isLoading }
 }
 
 export interface DocumentSegmentItem {
