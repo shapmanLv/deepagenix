@@ -27,14 +27,30 @@ export function EmbeddingSelector({ value, onChange }: EmbeddingSelectorProps) {
             <SelectItem
               key={embedding.value}
               value={embedding.value}
-              className='flex items-center gap-2 py-2'
+              className='py-2'
             >
-              <img
-                src={embedding.icon}
-                alt='icon'
-                className='h-5 w-5 object-contain'
-              />
-              <span className='truncate text-sm'>{embedding.name}</span>
+              <div className='flex gap-2'>
+                <div className='flex items-center gap-2'>
+                  <img
+                    src={embedding.icon}
+                    alt='icon'
+                    className='h-5 w-5 object-contain'
+                  />
+                  <div className='max-w-[180px] truncate text-sm font-medium'>
+                    {embedding.name}
+                  </div>
+                </div>
+                <div className='flex flex-wrap gap-1'>
+                  {embedding.languages.map((lang) => (
+                    <span
+                      key={lang}
+                      className='rounded bg-gray-200 px-1.5 py-0.5 text-[10px] text-gray-700'
+                    >
+                      {lang}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </SelectItem>
           ))
         ) : (
