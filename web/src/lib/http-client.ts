@@ -5,6 +5,7 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios'
+import { LoginResponse } from '@/services/login'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -67,14 +68,52 @@ class HttpClient {
     )
   }
 
-  private handleRequest = (config: InternalAxiosRequestConfig) => {
+  private handleRequest = async (config: InternalAxiosRequestConfig) => {
     const { requireAuth = true } = config
 
-    if (requireAuth) {
-      const token = useAuthStore.getState().accessToken
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+    if (!requireAuth) return config
+
+    const authStore = useAuthStore.getState()
+    const {
+      accessToken,
+      refreshToken,
+      isAccessTokenExpired,
+      setTokens,
+      clearTokens,
+    } = authStore
+
+    try {
+      if (isAccessTokenExpired()) {
+        if (!refreshToken) {
+          throw new Error('No refresh token available')
+        }
+
+        const res = await this.post<LoginResponse>(
+          `/da/api/user/refresh/${refreshToken}`,
+          {},
+          { requireAuth: false }
+        )
+
+        const newAccessToken = res.data.accessToken
+        const newRefreshToken = res.data.refreshToken
+        const expiresAtUtc = res.data.expiresAtUtc
+
+        if (newAccessToken && newRefreshToken && expiresAtUtc) {
+          setTokens({
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+            expiresAtUtc,
+          })
+          config.headers.Authorization = `Bearer ${newAccessToken}`
+        } else {
+          throw new Error('Refresh token response invalid')
+        }
+      } else if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`
       }
+    } catch (err) {
+      clearTokens()
+      console.error('Token refresh failed:', err)
     }
 
     return config
