@@ -9,12 +9,12 @@ import {
   IconFolderFilled,
   IconFolders,
 } from '@tabler/icons-react'
+import { useCreateKnowledge } from '@/services/konwledge'
 import {
   FormKnowledgeItem,
   FormKnowledgeItemSchema,
   IconTypeSchema,
 } from '@/services/konwledge/schema'
-import { showSubmittedData } from '@/utils/show-submitted-data'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -42,8 +42,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { DocumentSegmentSelector } from '@/components/document-segment-selector'
 import { EmbeddingSelector } from '@/components/embedding-selector'
 import { LanguageSelector } from '@/components/language-select'
+import { PluginSelector } from '@/components/plugins-selector'
 
 export type KnowledgeType = 'create' | 'update'
 
@@ -74,6 +76,8 @@ export function KnowledgeSettingsDialog({
 }: Props) {
   const isUpdate = type === 'update'
 
+  const { mutateAsync: createKnowledge } = useCreateKnowledge()
+
   const form = useForm<FormKnowledgeItem>({
     resolver: zodResolver(FormKnowledgeItemSchema),
     defaultValues: defaultValues,
@@ -83,10 +87,12 @@ export function KnowledgeSettingsDialog({
     form.reset(currentRow || defaultValues)
   }, [currentRow, form])
 
-  const onSubmit = (values: FormKnowledgeItem) => {
-    form.reset()
-    showSubmittedData(values)
-    onOpenChange(false)
+  const onSubmit = async (values: FormKnowledgeItem) => {
+    const res = await createKnowledge(values)
+    if (!res.code) {
+      form.reset()
+      onOpenChange(false)
+    }
   }
 
   return (
@@ -106,7 +112,7 @@ export function KnowledgeSettingsDialog({
             构建结构化知识库，为大语言模型提供实时、准确的上下文支持，提升大模型回复准确度。
           </DialogDescription>
         </DialogHeader>
-        <div className='-mr-4 h-[26.25rem] w-full overflow-y-auto py-1 pr-2 pl-1'>
+        <div className='-mr-4 h-[26.25rem] w-full overflow-y-auto py-1 pr-4 pl-1'>
           <Form {...form}>
             <form
               id='knowledge-form'
@@ -127,19 +133,18 @@ export function KnowledgeSettingsDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name='icon'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>选择图标</FormLabel>
+                    <FormLabel>图标</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className='w-[240px]'>
+                        <SelectTrigger className='w-full'>
                           <SelectValue placeholder='Select icon type' />
                         </SelectTrigger>
                       </FormControl>
@@ -178,17 +183,44 @@ export function KnowledgeSettingsDialog({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name='language'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>选择语言</FormLabel>
+                    <FormLabel>语言</FormLabel>
                     <LanguageSelector
                       onChange={field.onChange}
                       value={field.value}
                     ></LanguageSelector>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='indexConfig.embeddingModel'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>嵌入模型</FormLabel>
+                    <EmbeddingSelector
+                      onChange={field.onChange}
+                      value={field.value}
+                    ></EmbeddingSelector>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='indexConfig.participlePlugin'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>分词插件</FormLabel>
+                    <PluginSelector
+                      onChange={field.onChange}
+                      value={field.value}
+                    ></PluginSelector>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -199,11 +231,11 @@ export function KnowledgeSettingsDialog({
                 name='indexConfig.documentSegmentModel'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>选择嵌入模型</FormLabel>
-                    <EmbeddingSelector
+                    <FormLabel>文档分段模型</FormLabel>
+                    <DocumentSegmentSelector
                       onChange={field.onChange}
                       value={field.value}
-                    ></EmbeddingSelector>
+                    ></DocumentSegmentSelector>
                     <FormMessage />
                   </FormItem>
                 )}

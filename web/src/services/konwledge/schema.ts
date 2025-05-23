@@ -10,9 +10,9 @@ export const IconTypeSchema = z.enum([
 export type IconType = z.infer<typeof IconTypeSchema>
 
 export const IndexConfigSchema = z.object({
-  documentSegmentModel: z.string(),
-  embeddingModel: z.string(),
-  participlePlugin: z.string(),
+  documentSegmentModel: z.string().min(1, '文档分段模型不能为空'),
+  embeddingModel: z.string().min(1, '向量模型不能为空'),
+  participlePlugin: z.string().min(1, '分词插件不能为空'),
 })
 
 const BaseKnowledgeItemSchema = z.object({

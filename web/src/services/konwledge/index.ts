@@ -42,7 +42,11 @@ export const useGetPlugins = () => {
     },
   })
 
-  return { data, isLoading }
+  const plugins = useMemo(() => {
+    return data?.data ?? []
+  }, [data])
+
+  return { plugins, isLoading }
 }
 
 export interface IndexConfig {

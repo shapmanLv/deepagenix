@@ -22,7 +22,7 @@ export function LanguageSelector({ value, onChange }: LanguageSelectProps) {
     <div className='relative'>
       <Select value={value} onValueChange={onChange}>
         <>
-          <SelectTrigger loading={isLoading} className='w-[240px]'>
+          <SelectTrigger loading={isLoading} className='w-full'>
             <SelectValue placeholder='请选择语言' />
           </SelectTrigger>
 

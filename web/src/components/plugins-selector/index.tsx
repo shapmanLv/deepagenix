@@ -1,5 +1,5 @@
 import { IconMoodEmpty } from '@tabler/icons-react'
-import { useGetEmbeddings } from '@/services/model'
+import { useGetPlugins } from '@/services/konwledge'
 import {
   Select,
   SelectContent,
@@ -8,40 +8,40 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type EmbeddingSelectorProps = {
+type PluginSelectorProps = {
   value?: string
   onChange?: (value: string) => void
 }
 
-export function EmbeddingSelector({ value, onChange }: EmbeddingSelectorProps) {
-  const { embeddings, isLoading } = useGetEmbeddings()
+export function PluginSelector({ value, onChange }: PluginSelectorProps) {
+  const { plugins, isLoading } = useGetPlugins()
 
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger loading={isLoading} className='w-full'>
-        <SelectValue placeholder='请选择模型' />
+        <SelectValue placeholder='请选择分词插件' />
       </SelectTrigger>
       <SelectContent>
-        {embeddings && embeddings.length > 0 ? (
-          embeddings.map((embedding) => (
+        {plugins && plugins.length > 0 ? (
+          plugins.map((plugin) => (
             <SelectItem
-              key={embedding.value}
-              value={embedding.value}
+              key={plugin.value}
+              value={plugin.value}
               className='py-2'
             >
               <div className='flex gap-2'>
                 <div className='flex items-center gap-2'>
                   <img
-                    src={embedding.icon}
+                    src={plugin.icon}
                     alt='icon'
                     className='h-5 w-5 object-contain'
                   />
                   <div className='max-w-[300px] truncate text-sm font-medium'>
-                    {embedding.name}
+                    {plugin.name}
                   </div>
                 </div>
                 <div className='flex flex-wrap gap-1'>
-                  {embedding.languages.map((lang) => (
+                  {plugin.languages.map((lang) => (
                     <span
                       key={lang}
                       className='rounded bg-gray-200 px-1.5 py-0.5 text-[10px] text-gray-700'

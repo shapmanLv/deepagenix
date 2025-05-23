@@ -62,5 +62,9 @@ export const useGetDocumentSegments = () => {
     },
   })
 
-  return { data, isLoading }
+  const documentSegments = useMemo(() => {
+    return data?.data ?? []
+  }, [data])
+
+  return { documentSegments, isLoading }
 }
