@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -111,6 +112,24 @@ export default function Knowledge() {
           <p className='line-clamp-3 overflow-hidden text-gray-500 select-none'>
             导入您自己的文本数据以增强 LLM 的上下文。
           </p>
+        </div>
+      </li>
+    )
+  }
+
+  const renderCardSkeleton = () => {
+    return (
+      <li className='flex flex-col rounded-lg border p-4'>
+        <div className='mb-4 flex h-12 items-center gap-4'>
+          <Skeleton className='h-10 w-10 rounded-md' />
+          <div className='flex w-[calc(100%-56px)] flex-col gap-2'>
+            <Skeleton className='h-4 w-3/4' />
+          </div>
+        </div>
+        <div className='space-y-2'>
+          <Skeleton className='h-4 w-full' />
+          <Skeleton className='h-4 w-5/6' />
+          <Skeleton className='h-4 w-2/3' />
         </div>
       </li>
     )
@@ -217,7 +236,16 @@ export default function Knowledge() {
         <Separator className='shadow-sm' />
         <ul className='faded-bottom no-scrollbar grid grid-cols-1 gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3'>
           {renderAddCard()}
-          {filteredApps.map(renderCard)}
+          {isLoading ? (
+            <>
+              {renderCardSkeleton()}
+              {renderCardSkeleton()}
+              {renderCardSkeleton()}
+              {renderCardSkeleton()}
+            </>
+          ) : (
+            filteredApps.map(renderCard)
+          )}
         </ul>
       </Main>
 
