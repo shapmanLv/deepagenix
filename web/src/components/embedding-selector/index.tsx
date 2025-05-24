@@ -1,5 +1,5 @@
 import { IconMoodEmpty } from '@tabler/icons-react'
-import { useGetEmbeddings } from '@/services/model'
+import { EmbeddingItem, useGetEmbeddings } from '@/services/model'
 import {
   Select,
   SelectContent,
@@ -11,10 +11,22 @@ import {
 type EmbeddingSelectorProps = {
   value?: string
   onChange?: (value: string) => void
+  previewFilter?: (embedding: EmbeddingItem) => boolean
 }
 
-export function EmbeddingSelector({ value, onChange }: EmbeddingSelectorProps) {
+export function EmbeddingSelector({
+  value,
+  onChange,
+  previewFilter,
+}: EmbeddingSelectorProps) {
   const { embeddings, isLoading } = useGetEmbeddings()
+
+  const filteredByPreview =
+    previewFilter && embeddings ? embeddings.filter(previewFilter) : embeddings
+
+  const displayEmbeddings = filteredByPreview?.length
+    ? filteredByPreview
+    : embeddings
 
   return (
     <Select value={value} onValueChange={onChange}>
@@ -22,8 +34,8 @@ export function EmbeddingSelector({ value, onChange }: EmbeddingSelectorProps) {
         <SelectValue placeholder='请选择模型' />
       </SelectTrigger>
       <SelectContent>
-        {embeddings && embeddings.length > 0 ? (
-          embeddings.map((embedding) => (
+        {displayEmbeddings && displayEmbeddings.length > 0 ? (
+          displayEmbeddings.map((embedding) => (
             <SelectItem
               key={embedding.value}
               value={embedding.value}
@@ -56,7 +68,7 @@ export function EmbeddingSelector({ value, onChange }: EmbeddingSelectorProps) {
         ) : (
           <div className='text-muted-foreground flex flex-col items-center justify-center py-4'>
             <IconMoodEmpty className='mb-2 h-6 w-6' />
-            <span className='text-sm'>暂无数据</span>
+            <span className='text-sm'>暂无可选模型</span>
           </div>
         )}
       </SelectContent>

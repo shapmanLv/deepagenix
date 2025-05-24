@@ -8,8 +8,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-// 空状态图标
-
 interface LanguageSelectProps {
   value?: string
   onChange?: (value: string) => void

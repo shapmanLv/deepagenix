@@ -73,12 +73,17 @@ export const useGetKnowledges = () => {
 export const useGetKnowledgeDetail = (params: { id: string }) => {
   const { data, isLoading } = useQuery({
     queryKey: ['get-knowledge-detail', params],
+    enabled: !!params.id,
     queryFn: () => {
-      return httpClient.get<KnowledgeItem[]>(`/dk/api/knowledge/${params.id}`)
+      return httpClient.get<KnowledgeItem>(`/dk/api/knowledge/${params.id}`)
     },
   })
 
-  return { data, isLoading }
+  const knowledgeDetail = useMemo(() => {
+    return data?.data ?? null
+  }, [data])
+
+  return { knowledgeDetail, isLoading }
 }
 
 export function useCreateKnowledge() {

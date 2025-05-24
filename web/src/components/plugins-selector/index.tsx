@@ -1,5 +1,5 @@
 import { IconMoodEmpty } from '@tabler/icons-react'
-import { useGetPlugins } from '@/services/konwledge'
+import { PluginsItem, useGetPlugins } from '@/services/konwledge'
 import {
   Select,
   SelectContent,
@@ -11,10 +11,20 @@ import {
 type PluginSelectorProps = {
   value?: string
   onChange?: (value: string) => void
+  previewFilter?: (plugins: PluginsItem) => boolean
 }
 
-export function PluginSelector({ value, onChange }: PluginSelectorProps) {
+export function PluginSelector({
+  value,
+  onChange,
+  previewFilter,
+}: PluginSelectorProps) {
   const { plugins, isLoading } = useGetPlugins()
+
+  const filteredByPreview =
+    previewFilter && plugins ? plugins.filter(previewFilter) : plugins
+
+  const displayPlugins = filteredByPreview?.length ? filteredByPreview : plugins
 
   return (
     <Select value={value} onValueChange={onChange}>
@@ -22,8 +32,8 @@ export function PluginSelector({ value, onChange }: PluginSelectorProps) {
         <SelectValue placeholder='请选择分词插件' />
       </SelectTrigger>
       <SelectContent>
-        {plugins && plugins.length > 0 ? (
-          plugins.map((plugin) => (
+        {displayPlugins && displayPlugins.length > 0 ? (
+          displayPlugins.map((plugin) => (
             <SelectItem
               key={plugin.value}
               value={plugin.value}

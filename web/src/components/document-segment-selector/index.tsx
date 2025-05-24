@@ -1,5 +1,5 @@
 import { IconMoodEmpty } from '@tabler/icons-react'
-import { useGetDocumentSegments } from '@/services/model'
+import { DocumentSegmentItem, useGetDocumentSegments } from '@/services/model'
 import {
   Select,
   SelectContent,
@@ -11,13 +11,24 @@ import {
 type DocumentSegmentSelectorProps = {
   value?: string
   onChange?: (value: string) => void
+  previewFilter?: (documentSegments: DocumentSegmentItem) => boolean
 }
 
 export function DocumentSegmentSelector({
   value,
   onChange,
+  previewFilter,
 }: DocumentSegmentSelectorProps) {
   const { documentSegments, isLoading } = useGetDocumentSegments()
+
+  const filteredByPreview =
+    previewFilter && documentSegments
+      ? documentSegments.filter(previewFilter)
+      : documentSegments
+
+  const displayDocumentSegments = filteredByPreview?.length
+    ? filteredByPreview
+    : documentSegments
 
   return (
     <Select value={value} onValueChange={onChange}>
@@ -25,8 +36,8 @@ export function DocumentSegmentSelector({
         <SelectValue placeholder='请选择文档分段模型' />
       </SelectTrigger>
       <SelectContent>
-        {documentSegments && documentSegments.length > 0 ? (
-          documentSegments.map((documentSegment) => (
+        {displayDocumentSegments && displayDocumentSegments.length > 0 ? (
+          displayDocumentSegments.map((documentSegment) => (
             <SelectItem
               key={documentSegment.value}
               value={documentSegment.value}

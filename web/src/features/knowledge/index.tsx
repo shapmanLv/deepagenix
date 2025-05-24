@@ -133,14 +133,6 @@ export default function Knowledge() {
           </div>
           <div className='flex w-[calc(100%-56px)] flex-col'>
             <h2 className='truncate font-semibold'>{item.name}</h2>
-            <div className='truncate'>
-              {/* <span className='text-muted-foreground text-sm'>
-                {item.documents} document
-              </span>
-              <span className='text-muted-foreground ml-2 text-sm'>
-                {item.relatedApplications} related applications
-              </span> */}
-            </div>
           </div>
         </div>
         <div className='mb-8 max-w-xs'>

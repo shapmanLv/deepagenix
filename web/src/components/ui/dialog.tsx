@@ -4,6 +4,7 @@ import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Skeleton } from './skeleton'
 
 function Dialog({
   ...props
@@ -48,8 +49,13 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
+  loading = false,
+  skeleton,
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content>) {
+}: React.ComponentProps<typeof DialogPrimitive.Content> & {
+  loading?: boolean
+  skeleton?: React.ReactNode
+}) {
   return (
     <DialogPortal data-slot='dialog-portal'>
       <DialogOverlay />
@@ -61,7 +67,23 @@ function DialogContent({
         )}
         {...props}
       >
-        {children}
+        {loading ? (
+          <>
+            <DialogTitle>
+              <Skeleton className='h-7 w-3/4' />
+            </DialogTitle>
+            {skeleton || (
+              <div className='space-y-4'>
+                <Skeleton className='h-4 w-full' />
+                <Skeleton className='h-4 w-5/6' />
+                <Skeleton className='h-4 w-full' />
+                <Skeleton className='h-4 w-5/6' />
+              </div>
+            )}
+          </>
+        ) : (
+          children
+        )}
         <DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
           <XIcon />
           <span className='sr-only'>Close</span>

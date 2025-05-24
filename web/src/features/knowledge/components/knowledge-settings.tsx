@@ -9,7 +9,7 @@ import {
   IconFolderFilled,
   IconFolders,
 } from '@tabler/icons-react'
-import { useCreateKnowledge } from '@/services/konwledge'
+import { useCreateKnowledge, useGetKnowledgeDetail } from '@/services/konwledge'
 import {
   FormKnowledgeItem,
   FormKnowledgeItemSchema,
@@ -75,7 +75,9 @@ export function KnowledgeSettingsDialog({
   currentRow,
 }: Props) {
   const isUpdate = type === 'update'
-
+  const { knowledgeDetail, isLoading } = useGetKnowledgeDetail({
+    id: currentRow?.id ?? '',
+  })
   const { mutateAsync: createKnowledge } = useCreateKnowledge()
 
   const form = useForm<FormKnowledgeItem>({
@@ -84,8 +86,9 @@ export function KnowledgeSettingsDialog({
   })
 
   useEffect(() => {
-    form.reset(currentRow || defaultValues)
-  }, [currentRow, form])
+    const shouldUseDetail = !!currentRow?.id && !!knowledgeDetail
+    form.reset(shouldUseDetail ? knowledgeDetail : defaultValues)
+  }, [currentRow?.id, knowledgeDetail, form])
 
   const onSubmit = async (values: FormKnowledgeItem) => {
     const res = await createKnowledge(values)
@@ -103,7 +106,7 @@ export function KnowledgeSettingsDialog({
         onOpenChange(state)
       }}
     >
-      <DialogContent className='sm:max-w-lg'>
+      <DialogContent className='sm:max-w-lg' loading={isLoading}>
         <DialogHeader className='text-left'>
           <DialogTitle>
             {isUpdate ? '知识库设置' : '创建一个新的知识库'}
@@ -190,7 +193,10 @@ export function KnowledgeSettingsDialog({
                   <FormItem>
                     <FormLabel>语言</FormLabel>
                     <LanguageSelector
-                      onChange={field.onChange}
+                      onChange={(value) => {
+                        form.setValue('indexConfig.embeddingModel', '')
+                        field.onChange(value)
+                      }}
                       value={field.value}
                     ></LanguageSelector>
                     <FormMessage />
@@ -206,6 +212,9 @@ export function KnowledgeSettingsDialog({
                     <EmbeddingSelector
                       onChange={field.onChange}
                       value={field.value}
+                      previewFilter={(embedding) =>
+                        embedding?.languages?.includes(form.watch('language'))
+                      }
                     ></EmbeddingSelector>
                     <FormMessage />
                   </FormItem>
@@ -220,6 +229,9 @@ export function KnowledgeSettingsDialog({
                     <PluginSelector
                       onChange={field.onChange}
                       value={field.value}
+                      previewFilter={(plugins) =>
+                        plugins?.languages?.includes(form.watch('language'))
+                      }
                     ></PluginSelector>
                     <FormMessage />
                   </FormItem>
