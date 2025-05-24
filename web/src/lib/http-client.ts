@@ -76,23 +76,17 @@ class HttpClient {
     const { requireAuth = true } = config
 
     if (requireAuth) {
-      const authStore = useAuthStore.getState()
+      const getLatestAuthStore = () => useAuthStore.getState()
+      if (getLatestAuthStore().isAccessTokenExpired()) {
+        const refreshToken = getLatestAuthStore().refreshToken
 
-      // 检查 Token 是否过期（带缓冲期）
-      if (authStore.isAccessTokenExpired()) {
-        const refreshToken = authStore.refreshToken
-
-        // 无有效刷新令牌时直接中断
         if (!refreshToken) {
-          authStore.clearTokens()
+          getLatestAuthStore().clearTokens()
           throw new Error('No refresh token available')
         }
 
-        // 并发控制核心逻辑
         if (!isRefreshing) {
           isRefreshing = true
-
-          // 使用原生 axios 实例避免循环拦截（重要！）
           refreshPromise = axios
             .create({
               baseURL: '/deepagenix-api',
@@ -103,15 +97,12 @@ class HttpClient {
               `/da/api/user/refresh/${refreshToken}`
             )
             .then(({ data }) => {
-              // 再次验证过期状态（防止竞态条件）
-              if (authStore.isAccessTokenExpired()) {
-                authStore.setTokens(data.data)
-              }
+              useAuthStore.getState().setTokens(data.data)
             })
             .catch((error) => {
-              // 统一清理令牌并跳转登录
-              authStore.clearTokens()
-              throw new Error(`Token refresh failed: ${error.message}`)
+              useAuthStore.getState().clearTokens()
+              window.location.href = '/sign-in'
+              throw error
             })
             .finally(() => {
               isRefreshing = false
@@ -119,18 +110,13 @@ class HttpClient {
             })
         }
 
-        // 所有并发请求在此等待
-        try {
-          await refreshPromise
-        } catch (error) {
-          return Promise.reject(error)
-        }
+        await refreshPromise?.catch((error) => Promise.reject(error))
       }
 
-      // 最终设置最新 Authorization 头
-      const token = authStore.accessToken
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+      // 总是获取最新 token
+      const latestToken = getLatestAuthStore().accessToken
+      if (latestToken) {
+        config.headers.Authorization = `Bearer ${latestToken}`
       }
     }
 
