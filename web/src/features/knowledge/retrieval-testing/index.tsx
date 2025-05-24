@@ -16,6 +16,7 @@ import { Progress } from '@/components/ui/progress'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
+import { Back } from '@/components/layout/back'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
@@ -102,6 +103,7 @@ export default function RetrievalTesting() {
   return (
     <>
       <Header fixed>
+        <Back to='/knowledge' />
         <TopNav links={topNav} />
         <div className='ml-auto flex items-center space-x-4'>
           <ThemeSwitch />

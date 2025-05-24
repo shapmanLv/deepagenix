@@ -1,4 +1,5 @@
 import { Route } from '@/routes/_authenticated/knowledge/detail/$id/settings'
+import { Back } from '@/components/layout/back'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
@@ -17,6 +18,7 @@ export default function Settings() {
     <>
       {/* ===== Top Heading ===== */}
       <Header fixed>
+        <Back to='/knowledge' />
         <TopNav links={topNav} />
         <div className='ml-auto flex items-center space-x-4'>
           <ThemeSwitch />

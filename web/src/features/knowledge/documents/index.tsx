@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { DataTable } from '@/components/dataTable/data-table'
+import { Back } from '@/components/layout/back'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { TopNav } from '@/components/layout/top-nav'
@@ -35,6 +36,7 @@ export default function Documents() {
     <>
       {/* ===== Top Heading ===== */}
       <Header fixed>
+        <Back to='/knowledge' />
         <TopNav links={topNav} />
         <div className='ml-auto flex items-center space-x-4'>
           <ThemeSwitch />

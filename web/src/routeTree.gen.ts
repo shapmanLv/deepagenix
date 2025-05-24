@@ -34,6 +34,7 @@ import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_aut
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedKnowledgeCreateIndexImport } from './routes/_authenticated/knowledge/create/index'
 import { Route as AuthenticatedKnowledgeDetailIdSettingsImport } from './routes/_authenticated/knowledge/detail/$id/settings'
 import { Route as AuthenticatedKnowledgeDetailIdRetrievalTestingImport } from './routes/_authenticated/knowledge/detail/$id/retrieval-testing'
 import { Route as AuthenticatedKnowledgeDetailIdDocumentsImport } from './routes/_authenticated/knowledge/detail/$id/documents'
@@ -185,6 +186,13 @@ const AuthenticatedSettingsAccountRoute =
     id: '/account',
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
+
+const AuthenticatedKnowledgeCreateIndexRoute =
+  AuthenticatedKnowledgeCreateIndexImport.update({
+    id: '/knowledge/create/',
+    path: '/knowledge/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 const AuthenticatedKnowledgeDetailIdSettingsRoute =
@@ -373,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/knowledge/create/': {
+      id: '/_authenticated/knowledge/create/'
+      path: '/knowledge/create'
+      fullPath: '/knowledge/create'
+      preLoaderRoute: typeof AuthenticatedKnowledgeCreateIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/knowledge/detail/$id/documents': {
       id: '/_authenticated/knowledge/detail/$id/documents'
       path: '/knowledge/detail/$id/documents'
@@ -430,6 +445,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedKnowledgeIndexRoute: typeof AuthenticatedKnowledgeIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedKnowledgeCreateIndexRoute: typeof AuthenticatedKnowledgeCreateIndexRoute
   AuthenticatedKnowledgeDetailIdDocumentsRoute: typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
   AuthenticatedKnowledgeDetailIdRetrievalTestingRoute: typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
   AuthenticatedKnowledgeDetailIdSettingsRoute: typeof AuthenticatedKnowledgeDetailIdSettingsRoute
@@ -443,6 +459,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedKnowledgeIndexRoute: AuthenticatedKnowledgeIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedKnowledgeCreateIndexRoute:
+    AuthenticatedKnowledgeCreateIndexRoute,
   AuthenticatedKnowledgeDetailIdDocumentsRoute:
     AuthenticatedKnowledgeDetailIdDocumentsRoute,
   AuthenticatedKnowledgeDetailIdRetrievalTestingRoute:
@@ -478,6 +496,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
   '/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
   '/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
   '/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
@@ -505,6 +524,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/knowledge/create': typeof AuthenticatedKnowledgeCreateIndexRoute
   '/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
   '/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
   '/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
@@ -535,6 +555,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/knowledge/create/': typeof AuthenticatedKnowledgeCreateIndexRoute
   '/_authenticated/knowledge/detail/$id/documents': typeof AuthenticatedKnowledgeDetailIdDocumentsRoute
   '/_authenticated/knowledge/detail/$id/retrieval-testing': typeof AuthenticatedKnowledgeDetailIdRetrievalTestingRoute
   '/_authenticated/knowledge/detail/$id/settings': typeof AuthenticatedKnowledgeDetailIdSettingsRoute
@@ -566,6 +587,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/knowledge/create'
     | '/knowledge/detail/$id/documents'
     | '/knowledge/detail/$id/retrieval-testing'
     | '/knowledge/detail/$id/settings'
@@ -592,6 +614,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/knowledge/create'
     | '/knowledge/detail/$id/documents'
     | '/knowledge/detail/$id/retrieval-testing'
     | '/knowledge/detail/$id/settings'
@@ -620,6 +643,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/knowledge/create/'
     | '/_authenticated/knowledge/detail/$id/documents'
     | '/_authenticated/knowledge/detail/$id/retrieval-testing'
     | '/_authenticated/knowledge/detail/$id/settings'
@@ -687,6 +711,7 @@ export const routeTree = rootRoute
         "/_authenticated/knowledge/",
         "/_authenticated/tasks/",
         "/_authenticated/users/",
+        "/_authenticated/knowledge/create/",
         "/_authenticated/knowledge/detail/$id/documents",
         "/_authenticated/knowledge/detail/$id/retrieval-testing",
         "/_authenticated/knowledge/detail/$id/settings"
@@ -775,6 +800,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/knowledge/create/": {
+      "filePath": "_authenticated/knowledge/create/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/knowledge/detail/$id/documents": {

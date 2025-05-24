@@ -2,19 +2,14 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   IconAdjustmentsHorizontal,
-  IconBrandDatabricks,
-  IconDatabase,
   IconEdit,
-  IconFileUnknown,
-  IconFolderFilled,
-  IconFolders,
   IconPlus,
   IconSortAscendingLetters,
   IconSortDescendingLetters,
   IconTrash,
 } from '@tabler/icons-react'
 import { useGetKnowledges } from '@/services/konwledge'
-import { IconType, KnowledgeItem } from '@/services/konwledge/schema'
+import { KnowledgeItem } from '@/services/konwledge/schema'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -35,6 +30,7 @@ import {
   KnowledgeSettingsDialog,
   KnowledgeType,
 } from './components/knowledge-settings'
+import { renderCardIcon } from './hooks/use-konwledge'
 
 export default function Knowledge() {
   const { knowledges, isLoading } = useGetKnowledges()
@@ -49,8 +45,9 @@ export default function Knowledge() {
   const navigate = useNavigate()
 
   const createKnowledge = () => {
-    setOpened(true)
-    setKnowledgeType('create')
+    navigate({
+      to: '/knowledge/create',
+    })
   }
 
   const updateKnowledge = (row: KnowledgeItem) => {
@@ -74,26 +71,6 @@ export default function Knowledge() {
     )
     .filter((app) => app.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  const renderCardIcon = (icon: IconType) => {
-    if (icon === 'IconBrandDatabricks') {
-      return <IconBrandDatabricks />
-    }
-
-    if (icon === 'IconDatabase') {
-      return <IconDatabase />
-    }
-
-    if (icon === 'IconFolderFilled') {
-      return <IconFolderFilled />
-    }
-
-    if (icon === 'IconFolders') {
-      return <IconFolders />
-    }
-
-    return <IconFileUnknown />
-  }
-
   const renderAddCard = () => {
     return (
       <li
@@ -109,7 +86,7 @@ export default function Knowledge() {
           </div>
         </div>
         <div className='max-w-xs'>
-          <p className='line-clamp-3 overflow-hidden text-gray-500 select-none'>
+          <p className='line-clamp-3 overflow-hidden text-[12px] text-gray-500 select-none'>
             导入您自己的文本数据以增强 LLM 的上下文。
           </p>
         </div>
@@ -155,7 +132,7 @@ export default function Knowledge() {
           </div>
         </div>
         <div className='mb-8 max-w-xs'>
-          <p className='line-clamp-2 overflow-hidden text-gray-500'>
+          <p className='line-clamp-2 overflow-hidden text-[12px] text-gray-500'>
             {item.description}
           </p>
         </div>
@@ -164,7 +141,7 @@ export default function Knowledge() {
             size='icon'
             type='button'
             variant='ghost'
-            className='h-8 rounded-md'
+            className='h-8 w-8 rounded-md'
             onClick={(e) => {
               e.stopPropagation()
               updateKnowledge(item)
@@ -176,7 +153,7 @@ export default function Knowledge() {
             size='icon'
             type='button'
             variant='ghost'
-            className='h-8 rounded-md'
+            className='h-8 w-8 rounded-md'
           >
             <IconTrash size={20} className='stroke-muted-foreground' />
           </Button>
