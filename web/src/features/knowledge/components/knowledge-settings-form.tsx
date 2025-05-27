@@ -136,7 +136,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                         <SelectItem value={IconTypeSchema.Enum.IconFolders}>
                           <div className='flex items-center gap-2'>
                             <IconFolders className='h-4 w-4' />
-                            <span>文件夹组</span>
+                            <span>Folder Group</span>
                           </div>
                         </SelectItem>
                         <SelectItem
@@ -144,13 +144,13 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                         >
                           <div className='flex items-center gap-2'>
                             <IconFolderFilled className='h-4 w-4' />
-                            <span>实心文件夹</span>
+                            <span>Solid Folder</span>
                           </div>
                         </SelectItem>
                         <SelectItem value={IconTypeSchema.Enum.IconDatabase}>
                           <div className='flex items-center gap-2'>
                             <IconDatabase className='h-4 w-4' />
-                            <span>数据库</span>
+                            <span>Database</span>
                           </div>
                         </SelectItem>
                         <SelectItem
@@ -158,7 +158,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                         >
                           <div className='flex items-center gap-2'>
                             <IconBrandDatabricks className='h-4 w-4' />
-                            <span>数据砖块</span>
+                            <span>Databricks</span>
                           </div>
                         </SelectItem>
                       </SelectContent>
