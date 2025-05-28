@@ -1,4 +1,3 @@
-import { Footer } from 'react-day-picker'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Back } from '@/components/layout/back'
