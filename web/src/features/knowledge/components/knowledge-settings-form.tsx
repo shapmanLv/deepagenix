@@ -15,7 +15,6 @@ import {
   FormKnowledgeItemSchema,
   IconTypeSchema,
 } from '@/services/konwledge/schema'
-import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -34,7 +33,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { DocumentSegmentSelector } from '@/components/document-segment-selector'
+import { DocumentSegmentCards } from '@/components/document-segment-card'
 import { EmbeddingSelector } from '@/components/embedding-selector'
 import { LanguageSelector } from '@/components/language-select'
 import { PluginSelector } from '@/components/plugins-selector'
@@ -42,7 +41,7 @@ import { PluginSelector } from '@/components/plugins-selector'
 export type KnowledgeType = 'create' | 'update'
 
 interface Props {
-  type: KnowledgeType
+  type?: KnowledgeType
   currentRow?: FormKnowledgeItem
 }
 
@@ -58,9 +57,8 @@ const defaultValues: FormKnowledgeItem = {
   },
 }
 
-export function KnowledgeSettingsForm({ type, currentRow }: Props) {
-  const isUpdate = type === 'update'
-  const { knowledgeDetail, isLoading } = useGetKnowledgeDetail({
+export function KnowledgeSettingsForm({ currentRow }: Props) {
+  const { knowledgeDetail } = useGetKnowledgeDetail({
     id: currentRow?.id ?? '',
   })
   const { mutateAsync: createKnowledge } = useCreateKnowledge()
@@ -83,8 +81,8 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
   }
 
   return (
-    <div className='relative w-full py-1 pr-4 pl-1'>
-      <div className='overflow-y-auto'>
+    <div className='w-full py-1 pr-4 pl-1'>
+      <div className='max-w-[880px] pb-4'>
         <Form {...form}>
           <form
             id='knowledge-form'
@@ -113,6 +111,33 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
               )}
             />
 
+            {/* Description Field */}
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem className='grid grid-cols-4 items-start gap-4'>
+                  <FormLabel className='col-span-1 pt-2 text-right'>
+                    知识库描述
+                  </FormLabel>
+                  <div className='col-span-3 space-y-2'>
+                    <FormControl>
+                      <Textarea
+                        placeholder='请输入知识库描述'
+                        className='resize-none'
+                        {...field}
+                        value={field.value || ''}
+                      />
+                    </FormControl>
+                    <FormDescription className='text-xs'>
+                      可选，最多 200 个字符
+                    </FormDescription>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             {/* Icon Field */}
             <FormField
               control={form.control}
@@ -122,7 +147,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                   <FormLabel className='col-span-1 pt-2 text-right'>
                     图标
                   </FormLabel>
-                  <div className='col-span-3'>
+                  <div className='col-span-3 space-y-2'>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
@@ -164,6 +189,9 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                       </SelectContent>
                     </Select>
                     <FormMessage />
+                    <FormDescription className='text-xs'>
+                      为您的知识库添加一个好看的图标吧✨
+                    </FormDescription>
                   </div>
                 </FormItem>
               )}
@@ -178,7 +206,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                   <FormLabel className='col-span-1 pt-2 text-right'>
                     语言
                   </FormLabel>
-                  <div className='col-span-3'>
+                  <div className='col-span-3 space-y-2'>
                     <LanguageSelector
                       onChange={(value) => {
                         form.setValue('indexConfig.embeddingModel', '')
@@ -186,6 +214,9 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                       }}
                       value={field.value}
                     />
+                    <FormDescription className='text-xs'>
+                      选择知识库的主要语言，将影响嵌入模型和分词插件的可选范围
+                    </FormDescription>
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -201,7 +232,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                   <FormLabel className='col-span-1 pt-2 text-right'>
                     嵌入模型
                   </FormLabel>
-                  <div className='col-span-3'>
+                  <div className='col-span-3 space-y-2'>
                     <EmbeddingSelector
                       onChange={field.onChange}
                       value={field.value}
@@ -209,6 +240,9 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                         embedding?.languages?.includes(form.watch('language'))
                       }
                     />
+                    <FormDescription className='text-xs'>
+                      选择用于文档向量化的嵌入模型，不同模型的维度和性能各有差异
+                    </FormDescription>
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -224,7 +258,7 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                   <FormLabel className='col-span-1 pt-2 text-right'>
                     分词插件
                   </FormLabel>
-                  <div className='col-span-3'>
+                  <div className='col-span-3 space-y-2'>
                     <PluginSelector
                       onChange={field.onChange}
                       value={field.value}
@@ -232,6 +266,9 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                         plugins?.languages?.includes(form.watch('language'))
                       }
                     />
+                    <FormDescription className='text-xs'>
+                      选择文本分词处理插件，用于将文档内容切分为更小的语义单元
+                    </FormDescription>
                     <FormMessage />
                   </div>
                 </FormItem>
@@ -247,37 +284,13 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
                   <FormLabel className='col-span-1 pt-2 text-right'>
                     文档分段模型
                   </FormLabel>
-                  <div className='col-span-3'>
-                    <DocumentSegmentSelector
+                  <div className='col-span-3 space-y-2'>
+                    <DocumentSegmentCards
                       onChange={field.onChange}
                       value={field.value}
                     />
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            {/* Description Field */}
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }) => (
-                <FormItem className='grid grid-cols-4 items-start gap-4'>
-                  <FormLabel className='col-span-1 pt-2 text-right'>
-                    知识库描述
-                  </FormLabel>
-                  <div className='col-span-3 space-y-2'>
-                    <FormControl>
-                      <Textarea
-                        placeholder='请输入知识库描述'
-                        className='resize-none'
-                        {...field}
-                        value={field.value || ''}
-                      />
-                    </FormControl>
                     <FormDescription className='text-xs'>
-                      可选，最多 200 个字符
+                      选择文档分段模型，用于智能切分长文档并控制上下文长度
                     </FormDescription>
                     <FormMessage />
                   </div>
@@ -286,12 +299,6 @@ export function KnowledgeSettingsForm({ type, currentRow }: Props) {
             />
           </form>
         </Form>
-      </div>
-
-      <div className='mt-4 w-full text-right'>
-        <Button type='submit' form='knowledge-form' className='mr-4'>
-          {isUpdate ? '更新' : '创建知识库'}
-        </Button>
       </div>
     </div>
   )

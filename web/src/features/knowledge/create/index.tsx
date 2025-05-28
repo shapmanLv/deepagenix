@@ -1,3 +1,5 @@
+import { Footer } from 'react-day-picker'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Back } from '@/components/layout/back'
 import { Header } from '@/components/layout/header'
@@ -21,7 +23,7 @@ export default function CreateKnowledge() {
       </Header>
 
       {/* ===== Content ===== */}
-      <Main>
+      <Main fixed>
         <div className='mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4'>
           <div>
             <h2 className='mb-1 text-2xl font-bold tracking-tight'>
@@ -33,8 +35,13 @@ export default function CreateKnowledge() {
           </div>
         </div>
         <Separator className='shadow-sm' />
-        <div className='flex max-w-[880px] flex-1 pt-4'>
-          <KnowledgeSettingsForm type='create' />
+        <div className='flex flex-1 overflow-y-auto pt-4'>
+          <KnowledgeSettingsForm />
+        </div>
+        <div className='bg-background -mb-2 w-full border-t border-gray-200 pt-4 text-right'>
+          <Button type='submit' form='knowledge-form' className='mr-4'>
+            创建知识库
+          </Button>
         </div>
       </Main>
     </>

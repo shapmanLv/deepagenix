@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { IconMoodEmpty } from '@tabler/icons-react'
 import { EmbeddingItem, useGetEmbeddings } from '@/services/model'
 import {
@@ -13,7 +12,6 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-  TooltipArrow,
 } from '@/components/ui/tooltip'
 
 type EmbeddingSelectorProps = {
@@ -53,12 +51,7 @@ export function EmbeddingSelector({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <SelectItem
-                      value={embedding.value}
-                      className='relative py-2'
-                      onMouseLeave={() => setHoveredItem(null)}
-                      onMouseOver={() => setHoveredItem(embedding)}
-                    >
+                    <SelectItem value={embedding.value}>
                       <div className='flex gap-2'>
                         <div className='flex items-center gap-2'>
                           <img
@@ -90,7 +83,7 @@ export function EmbeddingSelector({
                     sideOffset={16}
                     className='bg-popover w-64 rounded-lg border p-4 shadow-lg'
                   >
-                    <div className='flex items-start gap-3'>
+                    <div className='flex items-center gap-3'>
                       <img
                         src={embedding.icon}
                         alt='icon'
