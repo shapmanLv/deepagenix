@@ -19,6 +19,7 @@ import {
   FormKnowledgeItemSchema,
   IconTypeSchema,
 } from '@/services/konwledge/schema'
+import { toast } from 'sonner'
 import {
   Form,
   FormControl,
@@ -81,7 +82,6 @@ export function KnowledgeSettingsForm({
 
   useEffect(() => {
     const shouldUseDetail = !!knowledgeDetail
-    console.log('knowledgeDetail', knowledgeDetail)
     form.reset(shouldUseDetail ? knowledgeDetail : defaultValues)
   }, [knowledgeDetail, form])
 
@@ -96,6 +96,17 @@ export function KnowledgeSettingsForm({
 
     if (!res.code) {
       form.reset()
+      if (type === 'update') {
+        toast.success('知识库更新成功', {
+          position: 'top-right',
+          duration: 3000,
+        })
+      } else {
+        toast.success('知识库创建成功', {
+          position: 'top-right',
+          duration: 3000,
+        })
+      }
       onSuccess?.()
     }
   }
@@ -232,8 +243,10 @@ export function KnowledgeSettingsForm({
                   </FormLabel>
                   <div className='col-span-3 space-y-2'>
                     <LanguageSelector
+                      key={`language-${field.value}-${form.watch('language')}`}
                       onChange={(value) => {
                         form.setValue('indexConfig.embeddingModel', '')
+                        form.setValue('indexConfig.participlePlugin', '')
                         field.onChange(value)
                       }}
                       value={field.value}
@@ -258,6 +271,7 @@ export function KnowledgeSettingsForm({
                   </FormLabel>
                   <div className='col-span-3 space-y-2'>
                     <EmbeddingSelector
+                      key={`embedding-${field.value}-${form.watch('indexConfig.embeddingModel')}`}
                       onChange={field.onChange}
                       value={field.value}
                       previewFilter={(embedding) =>
@@ -284,6 +298,7 @@ export function KnowledgeSettingsForm({
                   </FormLabel>
                   <div className='col-span-3 space-y-2'>
                     <PluginSelector
+                      key={`plugin-${field.value}-${form.watch('indexConfig.participlePlugin')}`}
                       onChange={field.onChange}
                       value={field.value}
                       previewFilter={(plugins) =>
