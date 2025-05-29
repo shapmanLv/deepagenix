@@ -26,7 +26,6 @@ export function EmbeddingSelector({
   previewFilter,
 }: EmbeddingSelectorProps) {
   const { embeddings, isLoading } = useGetEmbeddings()
-
   const filteredByPreview =
     previewFilter && embeddings ? embeddings.filter(previewFilter) : embeddings
 
@@ -48,7 +47,7 @@ export function EmbeddingSelector({
         <SelectContent>
           {displayEmbeddings && displayEmbeddings.length > 0 ? (
             displayEmbeddings.map((embedding) => (
-              <TooltipProvider>
+              <TooltipProvider key={embedding.value}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <SelectItem value={embedding.value}>

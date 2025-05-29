@@ -72,7 +72,7 @@ export const useGetKnowledges = () => {
 
 export const useGetKnowledgeDetail = (params: { id: string }) => {
   const { data, isLoading } = useQuery({
-    queryKey: ['get-knowledge-detail', params],
+    queryKey: ['get-knowledge-detail', params.id],
     enabled: !!params.id,
     queryFn: () => {
       return httpClient.get<KnowledgeItem>(`/dk/api/knowledge/${params.id}`)
@@ -100,8 +100,10 @@ export function useUpdateKnowledge() {
   return useMutation({
     mutationFn: (body: KnowledgeItem) =>
       httpClient.put(`/dk/api/knowledge/${body.id}`, body),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['get-knowledge-detail'] })
+    onSuccess: (_, params) => {
+      queryClient.invalidateQueries({
+        queryKey: ['get-knowledge-detail', params.id],
+      })
     },
   })
 }

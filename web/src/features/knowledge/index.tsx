@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import {
   IconAdjustmentsHorizontal,
-  IconEdit,
   IconPlus,
   IconSortAscendingLetters,
   IconSortDescendingLetters,
@@ -26,10 +25,6 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import {
-  KnowledgeSettingsDialog,
-  KnowledgeType,
-} from './components/knowledge-settings'
 import { renderCardIcon } from './hooks/use-konwledge'
 
 export default function Knowledge() {
@@ -38,22 +33,12 @@ export default function Knowledge() {
   const [sort, setSort] = useState('ascending')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const [opened, setOpened] = useState(false)
-  const [knowledgeType, setKnowledgeType] = useState<KnowledgeType>('create')
-
-  const [currentRow, setCurrentRow] = useState<KnowledgeItem>()
   const navigate = useNavigate()
 
   const createKnowledge = () => {
     navigate({
       to: '/knowledge/create',
     })
-  }
-
-  const updateKnowledge = (row: KnowledgeItem) => {
-    setOpened(true)
-    setCurrentRow(row)
-    setKnowledgeType('update')
   }
 
   const goToDetail = (id: string) => {
@@ -144,16 +129,7 @@ export default function Knowledge() {
             className='h-8 w-8 rounded-md'
             onClick={(e) => {
               e.stopPropagation()
-              updateKnowledge(item)
             }}
-          >
-            <IconEdit size={20} className='stroke-muted-foreground' />
-          </Button>
-          <Button
-            size='icon'
-            type='button'
-            variant='ghost'
-            className='h-8 w-8 rounded-md'
           >
             <IconTrash size={20} className='stroke-muted-foreground' />
           </Button>
@@ -225,16 +201,6 @@ export default function Knowledge() {
           )}
         </ul>
       </Main>
-
-      <KnowledgeSettingsDialog
-        open={opened}
-        type={knowledgeType}
-        onOpenChange={() => {
-          setOpened(false)
-          setCurrentRow(undefined)
-        }}
-        currentRow={currentRow}
-      />
     </>
   )
 }

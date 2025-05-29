@@ -9,7 +9,11 @@ import {
   IconFolderFilled,
   IconFolders,
 } from '@tabler/icons-react'
-import { useCreateKnowledge, useGetKnowledgeDetail } from '@/services/konwledge'
+import {
+  useCreateKnowledge,
+  useGetKnowledgeDetail,
+  useUpdateKnowledge,
+} from '@/services/konwledge'
 import {
   FormKnowledgeItem,
   FormKnowledgeItemSchema,
@@ -25,6 +29,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { ContentLoading } from '@/components/ui/loading'
 import {
   Select,
   SelectContent,
@@ -42,7 +47,7 @@ export type KnowledgeType = 'create' | 'update'
 
 interface Props {
   type?: KnowledgeType
-  currentRow?: FormKnowledgeItem
+  id?: string
   onSuccess?: () => void // 添加成功回调函数
 }
 
@@ -58,11 +63,16 @@ const defaultValues: FormKnowledgeItem = {
   },
 }
 
-export function KnowledgeSettingsForm({ currentRow, onSuccess }: Props) {
-  const { knowledgeDetail } = useGetKnowledgeDetail({
-    id: currentRow?.id ?? '',
+export function KnowledgeSettingsForm({
+  type = 'create',
+  id,
+  onSuccess,
+}: Props) {
+  const { knowledgeDetail, isLoading } = useGetKnowledgeDetail({
+    id: id ?? '',
   })
   const { mutateAsync: createKnowledge } = useCreateKnowledge()
+  const { mutateAsync: updateKnowledge } = useUpdateKnowledge()
 
   const form = useForm<FormKnowledgeItem>({
     resolver: zodResolver(FormKnowledgeItemSchema),
@@ -70,16 +80,28 @@ export function KnowledgeSettingsForm({ currentRow, onSuccess }: Props) {
   })
 
   useEffect(() => {
-    const shouldUseDetail = !!currentRow?.id && !!knowledgeDetail
+    const shouldUseDetail = !!knowledgeDetail
+    console.log('knowledgeDetail', knowledgeDetail)
     form.reset(shouldUseDetail ? knowledgeDetail : defaultValues)
-  }, [currentRow?.id, knowledgeDetail, form])
+  }, [knowledgeDetail, form])
 
   const onSubmit = async (values: FormKnowledgeItem) => {
-    const res = await createKnowledge(values)
+    let res
+
+    if (type === 'update' && id) {
+      res = await updateKnowledge({ id, ...values })
+    } else {
+      res = await createKnowledge(values)
+    }
+
     if (!res.code) {
       form.reset()
       onSuccess?.()
     }
+  }
+
+  if (isLoading) {
+    return <ContentLoading message='正在加载知识库详情...' />
   }
 
   return (
