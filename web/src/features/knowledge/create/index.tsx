@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Back } from '@/components/layout/back'
@@ -9,6 +10,12 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { KnowledgeSettingsForm } from '../components/knowledge-settings-form'
 
 export default function CreateKnowledge() {
+  const navigate = useNavigate()
+
+  const handleCreateSuccess = () => {
+    navigate({ to: '/knowledge' })
+  }
+
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -35,7 +42,7 @@ export default function CreateKnowledge() {
         </div>
         <Separator className='shadow-sm' />
         <div className='flex flex-1 overflow-y-auto pt-4'>
-          <KnowledgeSettingsForm />
+          <KnowledgeSettingsForm onSuccess={handleCreateSuccess} />
         </div>
         <div className='bg-background -mb-2 w-full border-t border-gray-200 pt-4 text-right'>
           <Button type='submit' form='knowledge-form' className='mr-4'>

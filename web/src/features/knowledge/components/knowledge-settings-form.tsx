@@ -43,6 +43,7 @@ export type KnowledgeType = 'create' | 'update'
 interface Props {
   type?: KnowledgeType
   currentRow?: FormKnowledgeItem
+  onSuccess?: () => void // 添加成功回调函数
 }
 
 const defaultValues: FormKnowledgeItem = {
@@ -57,7 +58,7 @@ const defaultValues: FormKnowledgeItem = {
   },
 }
 
-export function KnowledgeSettingsForm({ currentRow }: Props) {
+export function KnowledgeSettingsForm({ currentRow, onSuccess }: Props) {
   const { knowledgeDetail } = useGetKnowledgeDetail({
     id: currentRow?.id ?? '',
   })
@@ -77,6 +78,7 @@ export function KnowledgeSettingsForm({ currentRow }: Props) {
     const res = await createKnowledge(values)
     if (!res.code) {
       form.reset()
+      onSuccess?.()
     }
   }
 
