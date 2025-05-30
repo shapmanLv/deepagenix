@@ -43,7 +43,7 @@ export default function RetrievalTesting() {
   const { id } = Route.useParams()
   const topNav = useKnowledgeNavLinks(KnowledgeNavRoute.RETRIEVAL_TESTING, id)
 
-  // State management
+  // 状态管理
   const [query, setQuery] = useState('')
   const [topK, setTopK] = useState(5)
   const [similarityThreshold, setSimilarityThreshold] = useState(0.7)
@@ -60,22 +60,22 @@ export default function RetrievalTesting() {
         { length: topK },
         (_, i) => ({
           id: `${i}`,
-          content: `Matching knowledge content paragraph ${i + 1}... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`,
+          content: `召回的知识片段 ${i + 1}... 这是一段示例文本，用于演示向量召回系统的检索效果。内容包含了相关的知识信息，可以帮助用户理解向量检索的工作原理和召回质量。`,
           score: 0.9 - i * 0.1,
           metadata: {
-            source: 'example.pdf',
+            source: '示例文档.pdf',
             page: i + 1,
             chunkId: `CHK-${i.toString().padStart(4, '0')}`,
             length: Math.floor(Math.random() * 500) + 300,
             timestamp: new Date().toISOString().split('T')[0],
-            tags: ['technical', 'research', 'ai'],
+            tags: ['技术', '研究', '人工智能'],
           },
         })
       )
       setResults(mockResults)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
-      setError('Test request failed, please try again later')
+      setError('向量召回测试失败，请稍后重试')
     } finally {
       setIsLoading(false)
     }
@@ -113,26 +113,26 @@ export default function RetrievalTesting() {
 
       <Main fixed>
         <div className='flex h-full gap-6'>
-          {/* Left Panel - Input Section */}
+          {/* 左侧面板 - 输入区域 */}
           <div className='flex w-1/3 flex-col gap-6'>
             <Card className='h-full'>
               <CardHeader>
-                <CardTitle>Test Configuration</CardTitle>
+                <CardTitle>召回测试</CardTitle>
               </CardHeader>
               <CardContent className='flex flex-col gap-6'>
                 <div className='space-y-4'>
-                  <Label htmlFor='query'>Test Query</Label>
+                  <Label htmlFor='query'>查询文本</Label>
                   <Textarea
                     id='query'
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    placeholder='Enter your test query...'
+                    placeholder='请输入查询文本进行向量召回测试...'
                     className='min-h-[200px] resize-none'
                   />
                 </div>
 
                 <div className='space-y-4'>
-                  <Label>Number of Results (Top-K)</Label>
+                  <Label>召回数量 (Top-K)</Label>
                   <div className='flex items-center gap-4'>
                     <Slider
                       value={[topK]}
@@ -146,9 +146,7 @@ export default function RetrievalTesting() {
                 </div>
 
                 <div className='space-y-4'>
-                  <Label>
-                    Similarity Threshold ({similarityThreshold.toFixed(1)})
-                  </Label>
+                  <Label>相似度阈值 ({similarityThreshold.toFixed(1)})</Label>
                   <div className='flex items-center gap-4'>
                     <Slider
                       value={[similarityThreshold]}
@@ -173,20 +171,20 @@ export default function RetrievalTesting() {
                   ) : (
                     <Search className='mr-2 h-4 w-4' />
                   )}
-                  {isLoading ? 'Testing...' : 'Run Test'}
+                  {isLoading ? '召回中...' : '开始召回'}
                 </Button>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Panel - Results Section */}
+          {/* 右侧面板 - 结果区域 */}
           <div className='flex-1'>
             <Card className='h-full'>
               <CardHeader>
-                <CardTitle>Test Results</CardTitle>
+                <CardTitle>召回结果</CardTitle>
                 {!isLoading && results.length > 0 && (
                   <div className='text-muted-foreground text-sm'>
-                    Showing {results.length} chunks (Threshold: ≥
+                    召回 {results.length} 个片段 (阈值: ≥
                     {(similarityThreshold * 100).toFixed(1)}%)
                   </div>
                 )}
@@ -205,15 +203,15 @@ export default function RetrievalTesting() {
                       className='hover:bg-accent/50 p-4 transition-colors'
                     >
                       <div className='flex flex-col gap-3'>
-                        {/* Content Preview */}
+                        {/* 内容预览 */}
                         <div className='text-primary line-clamp-3 text-sm'>
                           {result.content}
                         </div>
 
-                        {/* Metadata Row */}
+                        {/* 元数据行 */}
                         <div className='text-muted-foreground flex flex-wrap items-center gap-4 text-xs'>
                           <div className='flex items-center gap-2'>
-                            <span className='font-medium'>Similarity:</span>
+                            <span className='font-medium'>相似度:</span>
                             <Progress
                               value={result.score * 100}
                               className='h-2 w-24'
@@ -225,7 +223,7 @@ export default function RetrievalTesting() {
                             <FileText className='h-4 w-4' />
                             <span>{result.metadata.source}</span>
                             <span>·</span>
-                            <span>Page {result.metadata.page}</span>
+                            <span>第 {result.metadata.page} 页</span>
                           </div>
 
                           <Badge variant='outline' className='gap-1'>
@@ -235,7 +233,7 @@ export default function RetrievalTesting() {
 
                           <div className='flex items-center gap-1'>
                             <Ruler className='h-4 w-4' />
-                            <span>{result.metadata.length} chars</span>
+                            <span>{result.metadata.length} 字符</span>
                           </div>
 
                           <div className='flex items-center gap-1'>
@@ -244,7 +242,7 @@ export default function RetrievalTesting() {
                           </div>
                         </div>
 
-                        {/* Tags */}
+                        {/* 标签 */}
                         {result.metadata.tags.length > 0 && (
                           <div className='flex flex-wrap gap-2'>
                             {result.metadata.tags.map((tag) => (
@@ -259,7 +257,7 @@ export default function RetrievalTesting() {
                   ))
                 ) : (
                   <div className='text-muted-foreground p-8 text-center'>
-                    Enter query and run test to view results
+                    输入查询文本并开始召回以查看结果
                   </div>
                 )}
               </CardContent>
