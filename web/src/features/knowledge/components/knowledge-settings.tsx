@@ -68,6 +68,9 @@ const defaultValues: FormKnowledgeItem = {
   },
 }
 
+/**
+ * @description 知识库设置弹窗,弃用
+ */
 export function KnowledgeSettingsDialog({
   open,
   type,
