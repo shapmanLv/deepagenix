@@ -1,3 +1,4 @@
+import { useState, KeyboardEvent } from 'react'
 import {
   IconPaperclip,
   IconPhotoPlus,
@@ -5,46 +6,94 @@ import {
   IconSend,
 } from '@tabler/icons-react'
 import { Button } from '../ui/button'
+import { Textarea } from '../ui/textarea'
 
-const Sender = () => {
+interface SenderProps {
+  onSendMessage: (message: string) => void
+}
+
+const Sender = ({ onSendMessage }: SenderProps) => {
+  const [message, setMessage] = useState('')
+  const [isComposing, setIsComposing] = useState(false)
+
+  const handleSend = () => {
+    if (message.trim()) {
+      onSendMessage(message)
+      setMessage('')
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && !isComposing) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const handleCompositionStart = () => {
+    setIsComposing(true)
+  }
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false)
+  }
+
   return (
-    <div className='border-input focus-within:ring-ring flex flex-col items-end gap-2 rounded-md border px-4 py-3 focus-within:ring-1 focus-within:outline-hidden'>
-      <textarea
-        placeholder='Type your messages...'
-        className='rounded-0 h-[58px] w-full flex-auto resize-none self-center bg-inherit p-0 transition-all duration-300 ease-in-out focus-visible:outline-hidden'
+    <div className='border-input focus-within:ring-ring bg-background flex flex-col items-end gap-2 rounded-lg border px-4 py-3 shadow-sm focus-within:ring-1 focus-within:outline-hidden'>
+      <Textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
+        placeholder='输入您的消息... (按 Enter 发送，Shift + Enter 换行)'
+        className='max-h-[200px] min-h-[60px] w-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0'
+        rows={1}
       />
 
       <div className='flex w-full items-center justify-between'>
-        <div className='flex gap-2'>
+        <div className='flex gap-1'>
           <Button
             size='icon'
             type='button'
             variant='ghost'
-            className='h-8 rounded-md'
+            className='hover:bg-muted h-8 w-8 rounded-md'
+            title='添加附件'
           >
-            <IconPlus size={20} className='stroke-muted-foreground' />
+            <IconPlus size={18} className='text-muted-foreground' />
           </Button>
           <Button
             size='icon'
             type='button'
             variant='ghost'
-            className='hidden h-8 rounded-md lg:inline-flex'
+            className='hover:bg-muted hidden h-8 w-8 rounded-md lg:inline-flex'
+            title='添加图片'
           >
-            <IconPhotoPlus size={20} className='stroke-muted-foreground' />
+            <IconPhotoPlus size={18} className='text-muted-foreground' />
           </Button>
           <Button
             size='icon'
             type='button'
             variant='ghost'
-            className='hidden h-8 rounded-md lg:inline-flex'
+            className='hover:bg-muted hidden h-8 w-8 rounded-md lg:inline-flex'
+            title='添加文件'
           >
-            <IconPaperclip size={20} className='stroke-muted-foreground' />
+            <IconPaperclip size={18} className='text-muted-foreground' />
           </Button>
         </div>
 
-        <div className='flex flex-none'>
-          <Button variant='ghost' size='icon' className='inline-flex'>
-            <IconSend size={20} />
+        <div className='flex items-center gap-2'>
+          <div className='text-muted-foreground text-xs'>
+            {message.length}/2000
+          </div>
+          <Button
+            onClick={handleSend}
+            disabled={!message.trim()}
+            size='icon'
+            className='h-8 w-8 rounded-md'
+            title='发送消息'
+          >
+            <IconSend size={18} />
           </Button>
         </div>
       </div>

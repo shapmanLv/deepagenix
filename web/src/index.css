@@ -3,6 +3,54 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* 消息区域向下滑动动画 */
+@keyframes slide-down {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+/* 输入框向下滑动动画 */
+@keyframes slide-down-input {
+  from {
+    transform: translateY(-100px);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down-input {
+  animation: slide-down-input 0.3s ease-out;
+}
+
+/* 淡入动画 */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);

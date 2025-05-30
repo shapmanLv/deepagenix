@@ -5,7 +5,6 @@ import {
   IconChecklist,
   // IconError404,
   IconHelp,
-  IconLayoutDashboard,
   // IconLock,
   // IconLockAccess,
   IconMessages,
@@ -27,9 +26,9 @@ export const sidebarData: SidebarData = {
       title: 'General',
       items: [
         {
-          title: 'Dashboard',
+          title: '聊天',
           url: '/',
-          icon: IconLayoutDashboard,
+          icon: IconMessages,
         },
         {
           title: '知识库',
