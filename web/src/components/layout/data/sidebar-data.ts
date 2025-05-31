@@ -2,7 +2,7 @@ import {
   // IconBarrierBlock,
   IconBrowserCheck,
   // IconBug,
-  IconChecklist,
+  // IconChecklist,
   // IconError404,
   IconHelp,
   // IconLock,
@@ -15,7 +15,7 @@ import {
   IconTool,
   IconUserCog,
   // IconUserOff,
-  IconUsers,
+  // IconUsers,
   IconBook,
 } from '@tabler/icons-react'
 import { type SidebarData } from '../types'
@@ -35,22 +35,22 @@ export const sidebarData: SidebarData = {
           url: '/knowledge',
           icon: IconBook,
         },
-        {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: IconChecklist,
-        },
-        {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: IconMessages,
-        },
-        {
-          title: 'Users',
-          url: '/users',
-          icon: IconUsers,
-        },
+        // {
+        //   title: 'Tasks',
+        //   url: '/tasks',
+        //   icon: IconChecklist,
+        // },
+        // {
+        //   title: 'Chats',
+        //   url: '/chats',
+        //   badge: '3',
+        //   icon: IconMessages,
+        // },
+        // {
+        //   title: 'Users',
+        //   url: '/users',
+        //   icon: IconUsers,
+        // },
       ],
     },
     // {

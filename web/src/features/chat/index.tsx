@@ -11,12 +11,14 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { Sender } from '@/components/sender'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { MarkdownRenderer } from '@/components/markdown-renderer'
 
 interface Message {
   id: string
   content: string
   role: 'user' | 'assistant'
   timestamp: Date
+  isStreaming?: boolean
 }
 
 export default function Chat() {
@@ -27,19 +29,42 @@ export default function Chat() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [streamingMessageId, setStreamingMessageId] = useState<string | null>(null)
 
   // 判断是否有消息
   const hasMessages = messages.length > 0
 
-  // 滚动到底部
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+  // 优化的滚动到底部函数
+  const scrollToBottom = useCallback((smooth = true) => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: smooth ? 'smooth' : 'instant',
+        block: 'end'
+      })
+    }
+  }, [])
 
-  // 发送消息后滚动到底部
+  // 发送消息后滚动到底部 - 优化滚动时机
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    if (messages.length > 0) {
+      // 使用 requestAnimationFrame 确保 DOM 更新完成后再滚动
+      requestAnimationFrame(() => {
+        scrollToBottom(true)
+      })
+    }
+  }, [messages, scrollToBottom])
+
+  // 流式输出时的滚动优化
+  useEffect(() => {
+    if (streamingMessageId) {
+      // 流式输出时使用更频繁但平滑的滚动
+      const scrollInterval = setInterval(() => {
+        scrollToBottom(false) // 使用 instant 避免动画冲突
+      }, 100)
+      
+      return () => clearInterval(scrollInterval)
+    }
+  }, [streamingMessageId, scrollToBottom])
 
   // 模拟加载历史消息
   const loadMoreMessages = useCallback(async () => {
@@ -50,12 +75,14 @@ export default function Chat() {
     // 模拟API调用延迟
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // 模拟历史消息数据
+    // 模拟历史消息数据 - 包含 Markdown 内容
     const newMessages: Message[] = Array.from({ length: 10 }, (_, index) => ({
       id: `history-${page}-${index}`,
-      content: `这是第${page}页的历史消息 ${index + 1}`,
+      content: index % 3 === 0 
+        ? `## 这是第${page}页的历史消息 ${index + 1}\n\n这是一个包含 **粗体文字** 和 *斜体文字* 的消息。\n\n\`\`\`javascript\nconsole.log('Hello World!');\n\`\`\`\n\n- 列表项 1\n- 列表项 2\n- 列表项 3`
+        : `这是第${page}页的历史消息 ${index + 1}`,
       role: index % 2 === 0 ? 'user' : 'assistant',
-      timestamp: new Date(Date.now() - (page * 10 + index) * 60000), // 每条消息间隔1分钟
+      timestamp: new Date(Date.now() - (page * 10 + index) * 60000),
     }))
 
     setMessages((prev) => [...newMessages, ...prev])
@@ -82,6 +109,37 @@ export default function Chat() {
     [hasMore, isLoading, loadMoreMessages]
   )
 
+  // 模拟打字机效果的流式输出
+  const simulateTypingEffect = useCallback(
+    async (messageId: string, fullContent: string) => {
+      setStreamingMessageId(messageId)
+
+      // 逐字符显示，模拟打字机效果
+      for (let i = 0; i <= fullContent.length; i++) {
+        const partialContent = fullContent.slice(0, i)
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === messageId
+              ? {
+                  ...msg,
+                  content: partialContent,
+                  isStreaming: i < fullContent.length,
+                }
+              : msg
+          )
+        )
+
+        // 控制打字机速度（每个字符间隔50-100ms）
+        const delay = Math.random() * 50 + 50
+        await new Promise((resolve) => setTimeout(resolve, delay))
+      }
+
+      setStreamingMessageId(null)
+    },
+    []
+  )
+
   const handleSendMessage = (content: string) => {
     if (!content.trim()) return
 
@@ -100,15 +158,24 @@ export default function Chat() {
 
     setMessages((prev) => [...prev, userMessage])
 
-    // 模拟AI回复
+    // 模拟AI回复 - 包含 Markdown 格式的打字机效果
     setTimeout(() => {
+      const assistantMessageId = (Date.now() + 1).toString()
+      const fullResponse = `我收到了您的消息："**${content.trim()}**"。\n\n这是一个模拟的 Markdown 格式回复，支持：\n\n## 功能特性\n\n- **粗体文字**\n- *斜体文字*\n- \`行内代码\`\n- [链接](https://example.com)\n\n### 代码块示例\n\n\`\`\`javascript\nfunction greet(name) {\n  console.log(\`Hello, \${name}!\`)\n}\n\ngreet('World')\n\`\`\`\n\n> 这是一个引用块，用于强调重要信息。\n\n在实际应用中，这里会连接到真正的AI服务，通过WebSocket或Server-Sent Events来实现真正的流式输出效果。`
+
+      // 先添加空的助手消息
       const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: `我收到了您的消息："${content.trim()}"。这是一个模拟回复，在实际应用中这里会连接到真正的AI服务。`,
+        id: assistantMessageId,
+        content: '',
         role: 'assistant',
         timestamp: new Date(),
+        isStreaming: true,
       }
+
       setMessages((prev) => [...prev, assistantMessage])
+
+      // 开始打字机效果
+      simulateTypingEffect(assistantMessageId, fullResponse)
 
       // 动画完成后重置状态
       if (isTransitioning) {
@@ -131,12 +198,15 @@ export default function Chat() {
       {/* ===== Main Chat Area ===== */}
       <Main fixed>
         <div className='relative flex h-full flex-col'>
-          {/* Messages Area - 只有在有消息时才显示 */}
+          {/* Messages Area - 优化布局转换 */}
           {hasMessages && (
             <div
               className={cn(
-                'flex-1 overflow-hidden transition-all duration-500 ease-out',
-                isTransitioning ? 'animate-slide-down' : ''
+                'flex-1 overflow-hidden',
+                // 移除可能导致滚动条闪烁的过渡动画
+                isTransitioning 
+                  ? 'transition-opacity duration-300 ease-out' 
+                  : ''
               )}
             >
               <ScrollArea
@@ -188,9 +258,17 @@ export default function Chat() {
                               : 'bg-muted'
                           )}
                         >
-                          <p className='text-sm leading-relaxed whitespace-pre-wrap'>
-                            {message.content}
-                          </p>
+                          {/* 使用 MarkdownRenderer 渲染消息内容 */}
+                          <div className='text-sm leading-relaxed'>
+                            <MarkdownRenderer 
+                              content={message.content} 
+                              className={cn(
+                                message.role === 'user' 
+                                  ? 'prose-invert' 
+                                  : ''
+                              )}
+                            />
+                          </div>
                           <div className='mt-2 text-xs opacity-70'>
                             {message.timestamp.toLocaleTimeString('zh-CN', {
                               hour: '2-digit',
@@ -211,22 +289,19 @@ export default function Chat() {
                     ))}
                   </div>
 
-                  {/* 滚动到底部的锚点 */}
-                  <div ref={messagesEndRef} />
+                  {/* 滚动到底部的锚点 - 添加一些底部间距 */}
+                  <div ref={messagesEndRef} className='h-4' />
                 </div>
               </ScrollArea>
             </div>
           )}
 
-          {/* Input Area - 添加向下滑动动画 */}
+          {/* Input Area - 优化布局转换动画 */}
           <div
             className={cn(
-              'p-4 transition-all duration-500 ease-out',
+              'p-4',
               hasMessages
-                ? cn(
-                    'relative translate-y-0 transform',
-                    isTransitioning ? 'animate-slide-down-input' : ''
-                  )
+                ? 'relative'
                 : 'absolute inset-0 flex items-center justify-center'
             )}
           >
@@ -242,15 +317,7 @@ export default function Chat() {
                   </p>
                 </div>
               )}
-              <div
-                className={cn(
-                  hasMessages && isTransitioning
-                    ? 'animate-slide-down-input'
-                    : ''
-                )}
-              >
-                <Sender onSendMessage={handleSendMessage} />
-              </div>
+              <Sender onSendMessage={handleSendMessage} />
             </div>
           </div>
         </div>
