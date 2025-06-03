@@ -2,6 +2,14 @@
 @import 'tw-animate-css';
 @plugin '@tailwindcss/typography';
 
+@import 'highlight.js/styles/github-dark.css';
+
+/* 去掉代码块背景色的更详细配置 */
+.hljs {
+  background: initial !important;
+  background-color: initial !important;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 /* 消息区域向下滑动动画 */

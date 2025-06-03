@@ -36,81 +36,40 @@ export default function Chat() {
   // 判断是否有消息
   const hasMessages = messages.length > 0
 
-  // 优化的滚动到底部函数
-  const scrollToBottom = useCallback((smooth = true) => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        behavior: smooth ? 'smooth' : 'instant',
-        block: 'end',
-      })
-    }
-  }, [])
+  const scrollToLatestUserMessage = useCallback(
+    (smooth = true) => {
+      // 从后向前查找最后一个用户消息
+      let latestUserMessageIndex = -1
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].role === 'user') {
+          latestUserMessageIndex = i
+          break
+        }
+      }
 
-  // 发送消息后滚动到底部 - 优化滚动时机
-  useEffect(() => {
-    if (messages.length > 0) {
-      // 使用 requestAnimationFrame 确保 DOM 更新完成后再滚动
-      requestAnimationFrame(() => {
-        scrollToBottom(true)
-      })
-    }
-  }, [messages, scrollToBottom])
+      if (latestUserMessageIndex !== -1 && scrollAreaRef.current) {
+        const messageElements =
+          scrollAreaRef.current.querySelectorAll('[data-message-id]')
 
-  // 流式输出时的滚动优化
-  useEffect(() => {
-    if (streamingMessageId) {
-      // 流式输出时使用更频繁但平滑的滚动
-      const scrollInterval = setInterval(() => {
-        scrollToBottom(false) // 使用 instant 避免动画冲突
-      }, 100)
-
-      return () => clearInterval(scrollInterval)
-    }
-  }, [streamingMessageId, scrollToBottom])
-
-  // 模拟加载历史消息
-  const loadMoreMessages = useCallback(async () => {
-    if (isLoading || !hasMore) return
-
-    setIsLoading(true)
-
-    // 模拟API调用延迟
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // 模拟历史消息数据 - 包含 Markdown 内容
-    const newMessages: Message[] = Array.from({ length: 10 }, (_, index) => ({
-      id: `history-${page}-${index}`,
-      content:
-        index % 3 === 0
-          ? `## 这是第${page}页的历史消息 ${index + 1}\n\n这是一个包含 **粗体文字** 和 *斜体文字* 的消息。\n\n\`\`\`javascript\nconsole.log('Hello World!');\n\`\`\`\n\n- 列表项 1\n- 列表项 2\n- 列表项 3`
-          : `这是第${page}页的历史消息 ${index + 1}`,
-      role: index % 2 === 0 ? 'user' : 'assistant',
-      timestamp: new Date(Date.now() - (page * 10 + index) * 60000),
-    }))
-
-    setMessages((prev) => [...newMessages, ...prev])
-    setPage((prev) => prev + 1)
-
-    // 模拟没有更多数据的情况
-    if (page >= 5) {
-      setHasMore(false)
-    }
-
-    setIsLoading(false)
-  }, [isLoading, hasMore, page])
-
-  // 处理滚动事件
-  const handleScroll = useCallback(
-    (event: React.UIEvent<HTMLDivElement>) => {
-      const { scrollTop } = event.currentTarget
-
-      // 当滚动到顶部附近时加载更多
-      if (scrollTop < 100 && hasMore && !isLoading) {
-        loadMoreMessages()
+        if (messageElements.length > latestUserMessageIndex) {
+          const targetElement = messageElements[latestUserMessageIndex]
+          targetElement.scrollIntoView({
+            behavior: smooth ? 'smooth' : 'instant',
+            block: 'start',
+          })
+        }
       }
     },
-    [hasMore, isLoading, loadMoreMessages]
+    [messages]
   )
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      requestAnimationFrame(() => {
+        scrollToLatestUserMessage(true)
+      })
+    }
+  }, [messages, scrollToLatestUserMessage])
 
   // 模拟打字机效果的流式输出
   const simulateTypingEffect = useCallback(
@@ -134,7 +93,7 @@ export default function Chat() {
         )
 
         // 控制打字机速度（每个字符间隔50-100ms）
-        const delay = Math.random() * 50 + 50
+        const delay = 20
         await new Promise((resolve) => setTimeout(resolve, delay))
       }
 
@@ -210,11 +169,7 @@ export default function Chat() {
                   : ''
               )}
             >
-              <ScrollArea
-                className='h-full'
-                ref={scrollAreaRef}
-                onScrollCapture={handleScroll}
-              >
+              <ScrollArea className='h-full' ref={scrollAreaRef}>
                 <div className='mx-auto max-w-3xl px-4'>
                   {/* 加载指示器 */}
                   {isLoading && (
@@ -235,6 +190,7 @@ export default function Chat() {
                     {messages.map((message) => (
                       <div
                         key={message.id}
+                        data-message-id={message.id}
                         className={cn(
                           'flex gap-4',
                           message.role === 'user'
