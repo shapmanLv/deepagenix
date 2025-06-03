@@ -29,6 +29,7 @@ export default function Chat() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const shouldScrollRef = useRef(false)
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
   )
@@ -38,6 +39,7 @@ export default function Chat() {
 
   const scrollToLatestUserMessage = useCallback(
     (smooth = true) => {
+      if (shouldScrollRef.current) return
       // 从后向前查找最后一个用户消息
       let latestUserMessageIndex = -1
       for (let i = messages.length - 1; i >= 0; i--) {
@@ -53,23 +55,25 @@ export default function Chat() {
 
         if (messageElements.length > latestUserMessageIndex) {
           const targetElement = messageElements[latestUserMessageIndex]
+
           targetElement.scrollIntoView({
-            behavior: smooth ? 'smooth' : 'instant',
+            behavior: smooth ? 'smooth' : 'auto',
             block: 'start',
           })
         }
       }
     },
-    [messages]
+    [messages, shouldScrollRef]
   )
 
   useEffect(() => {
     if (messages.length > 0) {
       requestAnimationFrame(() => {
         scrollToLatestUserMessage(true)
+        shouldScrollRef.current = true
       })
     }
-  }, [messages, scrollToLatestUserMessage])
+  }, [messages, scrollToLatestUserMessage, shouldScrollRef])
 
   // 模拟打字机效果的流式输出
   const simulateTypingEffect = useCallback(
@@ -119,6 +123,8 @@ export default function Chat() {
     }
 
     setMessages((prev) => [...prev, userMessage])
+
+    shouldScrollRef.current = false
 
     // 模拟AI回复 - 包含 Markdown 格式的打字机效果
     setTimeout(() => {
