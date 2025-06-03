@@ -1,5 +1,4 @@
 import ReactMarkdown from 'react-markdown'
-import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/lib/utils'
 
@@ -13,15 +12,8 @@ export function MarkdownRenderer({
   className,
 }: MarkdownRendererProps) {
   return (
-    <div
-      className={cn('prose prose-sm dark:prose-invert max-w-none', className)}
-    >
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
-      >
-        {content}
-      </ReactMarkdown>
+    <div className={cn('prose dark:prose-invert max-w-none', className)}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
     </div>
   )
 }
