@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -33,9 +34,55 @@ export default function Chat() {
   const [streamingMessageId, setStreamingMessageId] = useState<string | null>(
     null
   )
+  // 新增：控制"直达底部"按钮显示的状态
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false)
 
   // 判断是否有消息
   const hasMessages = messages.length > 0
+
+  // 新增：滚动到底部的函数
+  const scrollToBottom = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }
+  }, [])
+
+  // 新增：监听滚动事件，判断是否显示"直达底部"按钮
+  const handleScroll = useCallback(() => {
+    if (!scrollAreaRef.current) return
+
+    const scrollContainer = scrollAreaRef.current.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    )
+    if (!scrollContainer) return
+
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainer
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 100 // 距离底部100px内认为是在底部
+
+    setShowScrollToBottom(!isNearBottom && hasMessages)
+  }, [hasMessages])
+
+  // 新增：设置滚动监听器
+  useEffect(() => {
+    if (!scrollAreaRef.current) return
+
+    const scrollContainer = scrollAreaRef.current.querySelector(
+      '[data-radix-scroll-area-viewport]'
+    )
+    if (!scrollContainer) return
+
+    scrollContainer.addEventListener('scroll', handleScroll)
+
+    // 初始检查
+    handleScroll()
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll)
+    }
+  }, [handleScroll, messages])
 
   const scrollToLatestUserMessage = useCallback(
     (smooth = true) => {
@@ -169,7 +216,7 @@ export default function Chat() {
           {hasMessages && (
             <div
               className={cn(
-                'flex-1 overflow-hidden',
+                'relative flex-1 overflow-hidden',
                 isTransitioning
                   ? 'transition-opacity duration-300 ease-out'
                   : ''
@@ -254,6 +301,20 @@ export default function Chat() {
                   <div ref={messagesEndRef} className='h-4' />
                 </div>
               </ScrollArea>
+
+              {/* 悬浮的"直达底部"按钮 - 居中展示 */}
+              {showScrollToBottom && (
+                <div className='absolute bottom-4 left-1/2 z-10 -translate-x-1/2 transform'>
+                  <Button
+                    onClick={scrollToBottom}
+                    size='sm'
+                    variant='secondary'
+                    className='border-border/50 h-10 w-10 rounded-full border shadow-lg transition-all duration-200 hover:shadow-xl'
+                  >
+                    <ChevronDown className='h-4 w-4' />
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
